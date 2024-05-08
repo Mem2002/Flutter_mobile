@@ -17,6 +17,7 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     const String appTitle = 'Flutter layout demoaaaa';
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: appTitle,
       home: Scaffold(
         appBar: AppBar(
