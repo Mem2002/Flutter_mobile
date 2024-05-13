@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/pages/form_page.dart';
+import 'package:flutter_app/pages/setting_page.dart';
 import 'package:flutter_app/pages/attendance_page.dart';
+import 'package:flutter_app/pages/payment_page.dart';
 import 'package:intl/intl.dart';
 import '../controllers/home_controller.dart';
 import '../styles/themes.dart';
@@ -74,33 +77,33 @@ class HomePageState extends State<HomePage> {
                         icon: "assets/images/ic_calendar.png",
                       ),
                     ),
-                    // Container(
-                    //   height: 56,
-                    //   margin: const EdgeInsets.only(top: 16),
-                    //   child: PrimaryButton(
-                    //     onPressed: navigateToPayment,
-                    //     title: AppLocalizations.of(context)!.home_payment,
-                    //     icon: "assets/images/ic_payment1.png",
-                    //   ),
-                    // ),
-                    // Container(
-                    //   height: 56,
-                    //   margin: const EdgeInsets.only(top: 16),
-                    //   child: PrimaryButton(
-                    //     onPressed: navigateToForm,
-                    //     title: AppLocalizations.of(context)!.home_form,
-                    //     icon: "assets/images/ic_propose.png",
-                    //   ),
-                    // ),
-                    // Container(
-                    //   height: 56,
-                    //   margin: const EdgeInsets.only(top: 16),
-                    //   child: PrimaryButton(
-                    //     onPressed: navigateToSetting,
-                    //     title: AppLocalizations.of(context)!.home_setting,
-                    //     icon: "assets/images/ic_setting.png",
-                    //   ),
-                    // )
+                    Container(
+                      height: 56,
+                      margin: const EdgeInsets.only(top: 16),
+                      child: PrimaryButton(
+                        onPressed: navigateToPayment,
+                        title: AppLocalizations.of(context)!.home_payment,
+                        icon: "assets/images/ic_payment1.png",
+                      ),
+                    ),
+                    Container(
+                      height: 56,
+                      margin: const EdgeInsets.only(top: 16),
+                      child: PrimaryButton(
+                        onPressed: navigateToForm,
+                        title: AppLocalizations.of(context)!.home_form,
+                        icon: "assets/images/ic_propose.png",
+                      ),
+                    ),
+                    Container(
+                      height: 56,
+                      margin: const EdgeInsets.only(top: 16),
+                      child: PrimaryButton(
+                        onPressed: navigateToSetting,
+                        title: AppLocalizations.of(context)!.home_setting,
+                        icon: "assets/images/ic_setting.png",
+                      ),
+                    )
                   ],
                 ),
               ),
@@ -113,5 +116,17 @@ class HomePageState extends State<HomePage> {
 
   navigateToAttendance() {
     Navigator.of(context).push(SidePageRoute(const AttendancePage()));
+  }
+
+  navigateToPayment() {
+    Navigator.of(context).push(SidePageRoute(const PaymentPage()));
+  }
+
+  navigateToForm() {
+    Navigator.of(context).push(SidePageRoute(const FormPage()));
+  }
+
+  navigateToSetting() {
+    Navigator.of(context).push(SidePageRoute(const SettingPage()));
   }
 }
