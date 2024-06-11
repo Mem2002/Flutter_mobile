@@ -16,7 +16,7 @@ class ProposeApi {
       {DateTime? from, DateTime? to, int page = 1}) async {
     try {
       final DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
-      var res = await http.get('/employee/proposes',
+      var res = await http.get('/v1/api/users',
           queryParameters: {
             "page": page.toString(),
             "date_range[]": from != null && to != null

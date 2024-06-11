@@ -6,6 +6,7 @@ import 'package:injectable/injectable.dart';
 import 'api_base.dart';
 import 'header_provider.dart';
 
+//// Định nghĩa interface IHttpBase
 abstract class IHttpBase {
   Future<http.Response> get(String path,
       {Map<String, dynamic> queryParameters, bool auth = false});
@@ -18,8 +19,12 @@ abstract class IHttpBase {
       {bool formData = false, bool auth = false});
   Future<http.Response> delete(String path,
       {Map<String, dynamic> queryParameters, bool auth = false});
+  // -> // Các phương thức hoặc thuộc tính của IHttpBase
 }
 
+//  Khi bạn sử dụng decorator @Injectable, bạn cần chỉ định kiểu của đối tượng bạn muốn inject vào, thông qua thuộc tính as.
+//Đánh dấu lớp hiện tại là một đối tượng có thể được inject và được inject như là một đối tượng của kiểu IHttpBase
+//->  Điều này có nghĩa là khi bạn yêu cầu một đối tượng có kiểu IHttpBase từ GetIt hoặc một hệ thống dependency injection khác, GetIt sẽ cung cấp một đối tượng của lớp được đánh dấu bằng @Injectable(as: IHttpBase).
 @Injectable(as: IHttpBase)
 class HttpBase implements IHttpBase {
   IConfigBase url;
@@ -88,7 +93,7 @@ class HttpBase implements IHttpBase {
       }
       return <String, String>{
         'Content-Type': formData
-            ? "application/x-www-form-urlencoded; charset=UTF-8"
+            ? "application/x-www-form-urlencoded; charset=UTF-8" /////?
             : "application/json; charset=UTF-8",
         'Authorization': 'Bearer $token',
         'Cookie': 'auth_tokenparents=$token'

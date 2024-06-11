@@ -13,6 +13,7 @@ class PaymentController {
       ValueNotifier<Map<String, dynamic>?>(null);
 
   Future getPayslip(int month, int year) async {
+    //cái này có phải check token user?
     var res = await service.getPayslip(month, year);
     if (res == null) {
       return;

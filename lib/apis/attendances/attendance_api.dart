@@ -8,7 +8,7 @@ import 'dtos/attendance_response.dart';
 import 'dtos/checkout_response.dart';
 import 'dtos/checkin_response.dart';
 
-@injectable
+@Injectable()
 class AttendanceApi {
   IHttpBase http;
   AttendanceApi(this.http);

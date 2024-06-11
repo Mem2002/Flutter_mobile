@@ -6,32 +6,32 @@ abstract class IConfigBase {
   String get enviroment;
 }
 
-@Environment("beta")
+@Environment("test")
 @Injectable(as: IConfigBase)
 class BetaConfig implements IConfigBase {
   @override
-  String serverApi = "beta-api.edutalk.edu.vn";
+  String serverApi = "https://bemobile-ajl2.onrender.com";
 
   @override
-  String enviroment = "beta";
+  String enviroment = "test";
 }
 
-// @Environment("stage")
-// @Injectable(as: IApiBase)
-class StageConfig implements IConfigBase {
-  @override
-  String serverApi = "";
+// // @Environment("stage")
+// // @Injectable(as: IApiBase)
+// class StageConfig implements IConfigBase {
+//   @override
+//   String serverApi = "";
 
-  @override
-  String enviroment = "stage";
-}
+//   @override
+//   String enviroment = "stage";
+// }
 
-@Environment("product")
-@Injectable(as: IConfigBase)
-class ProductConfig implements IConfigBase {
-  @override
-  String serverApi = "api2.edutalk.edu.vn";
+// @Environment("product")
+// @Injectable(as: IConfigBase)
+// class ProductConfig implements IConfigBase {
+//   @override
+//   String serverApi = "api2.edutalk.edu.vn";
 
-  @override
-  String enviroment = "product";
-}
+//   @override
+//   String enviroment = "product";
+// }
