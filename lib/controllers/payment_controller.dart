@@ -14,16 +14,17 @@ class PaymentController {
 
   Future getPayslip(int month, int year) async {
     //cái này có phải check token user?
+     try {
+    // Gọi API để lấy payslip
     var res = await service.getPayslip(month, year);
-    if (res == null) {
-      return;
-    }
 
-    if (res.data == null) {
-      data.value = {};
-    } else {
-      data.value = res.data;
-    }
+    // Trực tiếp sử dụng res.body mà không cần check res == null
+    data.value = res?.data ?? {};
+  } catch (e) {
+    // Xử lý lỗi nếu có
+    print('Error fetching payslip: $e');
+    data.value = {}; // Hoặc có thể đặt một giá trị lỗi thích hợp
+  }
   }
 
   List<PayslipKey> keys = [

@@ -74,7 +74,7 @@ class SettingPageState extends State<SettingPage> {
                       margin: const EdgeInsets.only(top: 8),
                       alignment: Alignment.center,
                       child: Text(
-                        value.name,
+                        value.username,
                         style: NormalTextStyle(
                             color: Theme.of(context).colorScheme.onBackground),
                       ),
@@ -149,15 +149,15 @@ class SettingPageState extends State<SettingPage> {
                         // )
                       ]),
                     ),
-                    itemDisplay(
-                        "Chủ tài khoản", ((value.bankAccounts).first).ownerName,
-                        hasEdit: false),
-                    itemDisplay(
-                        "Số tài khoản", ((value.bankAccounts).first).number,
-                        hasEdit: false),
-                    itemDisplay(
-                        "Ngân hàng", ((value.bankAccounts).first).bankName,
-                        hasEdit: false),
+                    // itemDisplay(
+                    //     "Chủ tài khoản", ((value.bankAccounts).first).ownerName,
+                    //     hasEdit: false),
+                    // itemDisplay(
+                    //     "Số tài khoản", ((value.bankAccounts).first).number,
+                    //     hasEdit: false),
+                    // itemDisplay(
+                    //     "Ngân hàng", ((value.bankAccounts).first).bankName,
+                    //     hasEdit: false),
                     Container(
                       margin: const EdgeInsets.only(
                           left: 24, right: 24, bottom: 4, top: 12),

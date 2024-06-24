@@ -10,14 +10,14 @@ abstract class IConfigBase {
 @Injectable(as: IConfigBase)
 class BetaConfig implements IConfigBase {
   @override
-  String serverApi = "https://bemobile-ajl2.onrender.com";
+  String serverApi = "bemobile-ajl2.onrender.com";
 
   @override
   String enviroment = "test";
 }
 
-// // @Environment("stage")
-// // @Injectable(as: IApiBase)
+// @Environment("stage")
+// @Injectable(as: IApiBase)
 // class StageConfig implements IConfigBase {
 //   @override
 //   String serverApi = "";
@@ -30,7 +30,7 @@ class BetaConfig implements IConfigBase {
 // @Injectable(as: IConfigBase)
 // class ProductConfig implements IConfigBase {
 //   @override
-//   String serverApi = "api2.edutalk.edu.vn";
+//   String serverApi = "bemobile-ajl2.onrender.com";
 
 //   @override
 //   String enviroment = "product";

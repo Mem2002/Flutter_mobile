@@ -5,7 +5,7 @@ ProfileResponse profileResponseFromJson(String str) =>
 
 String profileResponseToJson(ProfileResponse data) =>
     json.encode(data.toJson());
-
+//  Define your data models
 class ProfileResponse {
   ProfileResponse({
     required this.error,
@@ -31,69 +31,69 @@ class ProfileResponse {
 class ProfileDto {
   ProfileDto({
     required this.id,
-    required this.name,
+    required this.username,
     required this.email,
     required this.phone,
     required this.gender,
     required this.birthday,
     required this.activeDeviceId,
-    required this.bankAccounts,
+    // required this.bankAccounts,
   });
   String activeDeviceId;
   int id;
-  String name;
+  String username;
   String email;
   String phone;
   String gender;
   DateTime birthday;
-  List<BankAccount> bankAccounts;
+  // List<BankAccount> bankAccounts;
 
   factory ProfileDto.fromJson(Map<String, dynamic> json) => ProfileDto(
-        id: json["id"],
-        name: json["name"],
+        id: json["_id"],
+        username: json["username"],
         email: json["email"],
         phone: json["phone"],
         gender: json["gender"],
         birthday: DateTime.parse(json["birthday"]),
         activeDeviceId: json["device_active_id"],
-        bankAccounts: List<BankAccount>.from(
-            json["bank_accounts"].map((x) => BankAccount.fromJson(x))),
+        // bankAccounts: List<BankAccount>.from(
+        //     json["bank_accounts"].map((x) => BankAccount.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
+        "_id": id,
+        "username": username,
         "email": email,
         "phone": phone,
         "gender": gender,
         "device_active_id": activeDeviceId,
         "birthday":
             "${birthday.year.toString().padLeft(4, '0')}-${birthday.month.toString().padLeft(2, '0')}-${birthday.day.toString().padLeft(2, '0')}",
-        "bank_accounts":
-            List<dynamic>.from(bankAccounts.map((x) => x.toJson())),
+        // "bank_accounts":
+        //     List<dynamic>.from(bankAccounts.map((x) => x.toJson())),
       };
 }
 
-class BankAccount {
-  BankAccount({
-    required this.ownerName,
-    required this.bankName,
-    required this.number,
-  });
+// class BankAccount {
+//   BankAccount({
+//     required this.ownerName,
+//     required this.bankName,
+//     required this.number,
+//   });
 
-  String ownerName;
-  String bankName;
-  String number;
+//   String ownerName;
+//   String bankName;
+//   String number;
 
-  factory BankAccount.fromJson(Map<String, dynamic> json) => BankAccount(
-        ownerName: json["owner_name"],
-        bankName: json["bank_name"],
-        number: json["number"],
-      );
+//   factory BankAccount.fromJson(Map<String, dynamic> json) => BankAccount(
+//         ownerName: json["owner_name"],
+//         bankName: json["bank_name"],
+//         number: json["number"],
+//       );
 
-  Map<String, dynamic> toJson() => {
-        "owner_name": ownerName,
-        "bank_name": bankName,
-        "number": number,
-      };
-}
+//   Map<String, dynamic> toJson() => {
+//         "owner_name": ownerName,
+//         "bank_name": bankName,
+//         "number": number,
+//       };
+// }

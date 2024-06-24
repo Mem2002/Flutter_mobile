@@ -40,6 +40,9 @@ class User {
   String? name;
   String? phone;
 
+//   fromJson: Chuyển đổi từ JSON sang đối tượng Dart. Dùng khi bạn nhận dữ liệu JSON từ bên ngoài và cần tạo đối tượng Dart.
+// toJson: Chuyển đổi từ đối tượng Dart sang JSON. Dùng khi bạn cần gửi dữ liệu đối tượng Dart ra bên ngoài hoặc lưu trữ nó dưới dạng JSON.
+
   factory User.fromJson(Map<String, dynamic> json) => User(
         id: json["id"],
         name: json["name"],

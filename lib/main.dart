@@ -5,6 +5,8 @@ import '../styles/themes.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 
+import 'pages/login_page.dart';
+
 void main() async {
   await configureDependencies();
   runApp(const MyApp());
@@ -20,7 +22,7 @@ class MyApp extends StatefulWidget {
 class HomePageState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp(     
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       debugShowCheckedModeBanner: false,
@@ -28,7 +30,7 @@ class HomePageState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(),
+      home: const LoginPage(),
     );
   }
 }

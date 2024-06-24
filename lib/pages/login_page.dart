@@ -209,6 +209,13 @@ class LoginState extends State<LoginPage> {
     nav.pushAndRemoveUntil(
         SidePageRoute(const HomePage()), (Route<dynamic> route) => false);
   }
+  // pushAndRemoveUntil là một phương thức của Navigator giúp điều hướng đến một trang mới 
+  // const giúp tối ưu hóa hiệu suất khi đối tượng không thay đổi.
+
+//   (Route<dynamic> route) => false:
+
+// Đây là một hàm ẩn danh (lambda function) được sử dụng để kiểm tra từng Route trong ngăn xếp điều hướng.
+// Khi hàm này trả về false cho tất cả các Route, pushAndRemoveUntil sẽ xóa tất cả các trang hiện có khỏi ngăn xếp điều hướng, chỉ để lại trang mới (HomePage) trong ngăn xếp.
 }
 
 class MainInputDecoration extends InputDecoration {

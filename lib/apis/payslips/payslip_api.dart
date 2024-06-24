@@ -8,17 +8,10 @@ class PayslipApi {
   PayslipApi(this.http);
   Future<PayslipResponse?> getPayslip(int month, int year) async {
     try {
-      var res = await http.get('/employee/payslip/by-month',
+      var res = await http.get('/v1/api/users',
           queryParameters: {"month": month.toString(), "year": year.toString()},
           auth: true);
-      // In dữ liệu thô từ HTTP response
-      print('Raw response body: ${res.body}');
-
-      // Parse dữ liệu từ JSON
       var body = payslipResponseFromJson(res.body);
-
-      // In dữ liệu sau khi đã parse
-      print('Parsed response body: $body');
 
       return body;
     } catch (e) {

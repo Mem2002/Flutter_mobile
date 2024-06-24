@@ -1,7 +1,7 @@
 import 'package:flutter_app/apis/profiles/dtos/profile_dto.dart';
 import 'package:injectable/injectable.dart';
 import '../http_base.dart';
-
+// Implement the Profile API
 @Injectable()
 class ProfileApi {
   IHttpBase http;

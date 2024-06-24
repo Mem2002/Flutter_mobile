@@ -71,6 +71,7 @@ class HttpBase implements IHttpBase {
     return res;
   }
 
+//  Call the API and Parse the Response
   @override
   Future<http.Response> delete(String path,
       {Map<String, dynamic>? queryParameters, bool auth = false}) async {
@@ -89,7 +90,7 @@ class HttpBase implements IHttpBase {
       var header = await headerProvider.getAuthorization();
       String token = header?.token ?? "";
       if (token.isEmpty) {
-        throw Exception("not auth");
+        throw Exception("Not auth");
       }
       return <String, String>{
         'Content-Type': formData

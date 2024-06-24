@@ -22,7 +22,7 @@ class Token {
 
 @Injectable()
 class HeaderProvider {
-  final String keyTokenUser = "token_user";
+  final String keyTokenUser = "Cookie_JWT";
   ICacheService cacheService;
   HeaderProvider(this.cacheService);
   Future<Token?> getAuthorization() async {

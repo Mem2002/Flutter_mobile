@@ -7,15 +7,15 @@ import 'dtos/register_response.dart';
 class AuthenticationApi {
   IHttpBase http;
 
-  AuthenticationApi
-      (this.http);
+  AuthenticationApi(this.http);
 
   Future<LoginResponse?> logInAsync(String email, String password) async {
     try {
-      var res = await http.post('/employee/login',
-          {'email': email.trim(), 'password': password.trim()});
+      var res = await http.post('/v1/api/login',
+          {'email': email.trim(), 'password': password.trim()}); //trim được sử dụng để loại bỏ khoảng trắng (whitespace) 
       var body = loginResponseFromJson(res.body);
       return body;
+      // print(body);
     } catch (e) {
       return null;
     }
@@ -24,9 +24,13 @@ class AuthenticationApi {
   Future<RegisterResponse?> signUpAsync(
       String name, String email, String password) async {
     try {
-      var res = await http.post('/employee/register',
-          {'name': name.trim(),'email': email.trim(), 'password': password.trim(),'confirm_password':password.trim()});
-     return registerResponseFromMap(res.body);
+      var res = await http.post('/employee/register', {
+        'name': name.trim(),
+        'email': email.trim(),
+        'password': password.trim(),
+        'confirm_password': password.trim()
+      });
+      return registerResponseFromMap(res.body);
     } catch (e) {
       return null;
     }

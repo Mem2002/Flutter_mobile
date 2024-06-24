@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_app/pages/form_page.dart';
 import 'package:flutter_app/pages/setting_page.dart';
@@ -27,8 +26,9 @@ class HomePage extends StatefulWidget {
   State<StatefulWidget> createState() => HomePageState();
 }
 
+//  Using the Function in Your Flutter App
 class HomePageState extends State<HomePage> {
-  final HomeController controller = GetIt.instance.get<HomeController>(); //không tìm được đối tượng đăng ký cho homeController
+  final HomeController controller = GetIt.instance.get<HomeController>();
   String deviceId = "";
   String error = "";
 
@@ -72,8 +72,8 @@ class HomePageState extends State<HomePage> {
               child: ValueListenableBuilder(
                 valueListenable: controller.data,
                 builder: (context, value, child) {
-                  String name = value?.name ?? "";
-                  String activeDevice = value?.activeDeviceId ?? "";
+                  String name = value?.username ?? "";
+                  // String activeDevice = value?.activeDeviceId ?? "";
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -106,7 +106,7 @@ class HomePageState extends State<HomePage> {
                         ],
                       ),
                       Visibility(
-                        visible: activeDevice != deviceId,
+                        // visible: activeDevice != deviceId,
                         child: Container(
                           margin: const EdgeInsets.only(top: 12),
                           padding: const EdgeInsets.all(12),
@@ -288,6 +288,13 @@ class HomePageState extends State<HomePage> {
 
   navigateToSetting() {
     Navigator.of(context).push(SidePageRoute(const SettingPage()));
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller.getProfile();
   }
 
   //   checkIn() async {
