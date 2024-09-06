@@ -25,6 +25,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class RegisterState extends State<RegisterPage> {
+  
   final RegisterController registerController =
       GetIt.instance.get<RegisterController>();
   final TextEditingController userController = TextEditingController();

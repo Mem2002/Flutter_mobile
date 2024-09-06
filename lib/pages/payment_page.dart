@@ -139,7 +139,6 @@ class PaymentPageState extends State<PaymentPage> {
                                 child: const Center(child: Text("Đang tải")),
                               );
                             }
-
                             if (value.isEmpty) {
                               return SizedBox(
                                 height:
@@ -157,6 +156,7 @@ class PaymentPageState extends State<PaymentPage> {
                                   value[controller.keys[index].key]);
                             }));
                           },
+                          
                         ),
                       ),
                     ),
@@ -179,10 +179,13 @@ class PaymentPageState extends State<PaymentPage> {
     switch (key.type) {
       case PayslipType.percent:
         if (data is String) {
+               print("nam anh");
           if (data.contains('%') == true) {
             value = data.toString();
+            print("nam anh");
             break;
           }
+          print("nam anh");
         }
         data ??= 0;
         final percentFormat = NumberFormat("#.##", "en_US");

@@ -11,11 +11,13 @@ class AuthenticationApi {
 
   Future<LoginResponse?> logInAsync(String email, String password) async {
     try {
-      var res = await http.post('/v1/api/login',
-          {'email': email.trim(), 'password': password.trim()}); //trim được sử dụng để loại bỏ khoảng trắng (whitespace) 
+      var res = await http.post('/v1/api/login', {
+        'email': email.trim(),
+        'password': password.trim()
+      }); //trim được sử dụng để loại bỏ khoảng trắng (whitespace)
       var body = loginResponseFromJson(res.body);
-      return body;
-      // print(body);
+      // return body;
+      print("body");
     } catch (e) {
       return null;
     }
@@ -24,7 +26,7 @@ class AuthenticationApi {
   Future<RegisterResponse?> signUpAsync(
       String name, String email, String password) async {
     try {
-      var res = await http.post('/employee/register', {
+      var res = await http.post('/v1/api/login', {
         'name': name.trim(),
         'email': email.trim(),
         'password': password.trim(),

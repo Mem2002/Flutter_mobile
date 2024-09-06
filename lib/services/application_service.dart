@@ -83,7 +83,7 @@ class ApplicationService extends IApplicationService {
   Future<String> getCurrentDeviceIdAsync() async {
     var device = await cacheService.getOrAddAsync<DeviceId>(
         "deviceId", () async => DeviceId(const Uuid().v4()));
-    return device!["id"].toString();
+    return device!["_id"].toString();
   }
 
   @override
@@ -158,5 +158,5 @@ class DeviceId {
   String id;
   DeviceId(this.id);
 
-  Map<String, dynamic> toJson() => {"id": id};
+  Map<String, dynamic> toJson() => {"_id": id};
 }
