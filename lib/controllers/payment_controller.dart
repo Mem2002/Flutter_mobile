@@ -11,22 +11,18 @@ class PaymentController {
 
   ValueNotifier<Map<String, dynamic>?> data =
       ValueNotifier<Map<String, dynamic>?>(null);
-    //ValueNotifier là một lớp trong Flutter, thường được sử dụng để quản lý và thông báo về các thay đổi của một giá trị duy nhất.
-    // Map<String, dynamic>? là kiểu dữ liệu của giá trị được giữ bởi ValueNotifier. Nó là một bản đồ (map) có khóa là chuỗi (String) và giá trị là bất kỳ loại nào (dynamic). Dấu hỏi ? chỉ ra rằng bản đồ này có thể là null.
 
   Future getPayslip(int month, int year) async {
-    //cái này có phải check token user?
-     try {
-    // Gọi API để lấy payslip
     var res = await service.getPayslip(month, year);
+    if (res == null) {
+      return;
+    }
 
-    // Trực tiếp sử dụng res.body mà không cần check res == null
-    data.value = res?.data ?? {};
-  } catch (e) {
-    // Xử lý lỗi nếu có
-    print('Error fetching payslip: $e');
-    data.value = {}; // Hoặc có thể đặt một giá trị lỗi thích hợp
-  }
+    if (res.data == null) {
+      data.value = {};
+    } else {
+      data.value = res.data;
+    }
   }
 
   List<PayslipKey> keys = [

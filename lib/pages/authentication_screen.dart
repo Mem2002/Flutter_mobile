@@ -8,7 +8,6 @@ import '../styles/colors.dart';
 import '../utils/page_router.dart';
 import 'login_page.dart';
 
-
 class AuthenticationScreen extends StatefulWidget {
   const AuthenticationScreen({super.key});
 
@@ -33,6 +32,7 @@ class AuthenticationScreenState extends State<AuthenticationScreen> {
       EasyLoading.dismiss();
       if (res == true) {
         navigator.pushReplacement(FadePageRoute(const HomePage()));
+        
         return;
       }
       // ignore: empty_catches
