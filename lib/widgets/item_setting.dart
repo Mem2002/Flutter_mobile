@@ -23,14 +23,14 @@ class ItemSettingWidget extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
             bottom: BorderSide(
-                color: Theme.of(context).colorScheme.onBackground, width: 1)),
+                color: Theme.of(context).colorScheme.onSurface, width: 1)),
       ),
       child: Row(children: [
         Text(
           title,
           style: SmallerNormalTextStyle(
               color:
-                  Theme.of(context).colorScheme.onBackground.withOpacity(0.8)),
+                  Theme.of(context).colorScheme.onSurface.withOpacity(0.8)),
         ),
         Expanded(
           child: Text(

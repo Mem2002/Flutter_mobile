@@ -5,6 +5,7 @@
     "locale": "en",
     "day_of_week": "EE",
     "home_setting": "Setting",
+    "home_qr_code": "QR Code",
     "home_attendance": "Attendance",
     "home_payment": "Payment",
     "login": "Login",

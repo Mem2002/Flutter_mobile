@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_app/styles/text_styles.dart';
 import 'package:flutter_app/styles/themes.dart';
+import 'package:flutter_app/utils/statusbar_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:mat_month_picker_dialog/mat_month_picker_dialog.dart';
-import '../models/payslipModel.dart'; 
+import '../models/payslipModel.dart';
 import '../services/api.dart';
 import '../widgets/item_setting.dart';
 
@@ -23,6 +26,11 @@ class _PaymentPageState extends State<PaymentPage> {
   void initState() {
     super.initState();
     scrollController.addListener(scrollChange);
+    _initializeDate();
+    _payslipsFuture = Api.getPayslip(); // Load initial payslip data
+  }
+
+  void _initializeDate() {
     var now = DateTime.now();
     var month = now.month - 1;
     var year = now.year;
@@ -34,26 +42,19 @@ class _PaymentPageState extends State<PaymentPage> {
       year -= 1;
     }
     currentTime = DateTime(year, month, 1);
-    _payslipsFuture = Api.getPayslip(); // Ensure correct parameters are passed
   }
 
   void scrollChange() {
     setState(() {
-      opacity = scrollController.offset <= 0
+      opacity = (scrollController.offset <= 0)
           ? 0
-          : scrollController.offset >= 56
-              ? 1
-              : scrollController.offset / 56;
+          : (scrollController.offset >= 56 ? 1 : scrollController.offset / 56);
     });
   }
 
   double? _parseToDouble(dynamic value) {
-    if (value is double) {
-      return value;
-    } else if (value is String) {
-      final parsed = double.tryParse(value);
-      return parsed;
-    }
+    if (value is double) return value;
+    if (value is String) return double.tryParse(value);
     return null;
   }
 
@@ -62,8 +63,8 @@ class _PaymentPageState extends State<PaymentPage> {
       return 'N/A';
     }
     return NumberFormat.currency(
-      customPattern: "#,##0.### đ", 
-      decimalDigits: 0
+      customPattern: "#,##0.### đ",
+      decimalDigits: 0,
     ).format(amount);
   }
 
@@ -84,93 +85,28 @@ class _PaymentPageState extends State<PaymentPage> {
           ),
           SafeArea(
             child: RefreshIndicator(
-              onRefresh: () async {
-                setState(() {
-                  _payslipsFuture = Api.getPayslip();
-                });
-              },
+              onRefresh: _reloadPayslips,
               child: CustomScrollView(
                 controller: scrollController,
                 slivers: [
-                  SliverAppBar(
-                    backgroundColor: Theme.of(context).primaryColor.withOpacity(opacity),
-                    expandedHeight: 56,
-                    pinned: true,
-                    flexibleSpace: FlexibleSpaceBar(
-                      centerTitle: true,
-                      title: GestureDetector(
-                        onTap: selectMonth,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(DateFormat("MMMM yyyy").format(currentTime)),
-                            Icon(Icons.arrow_drop_down),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  _buildSliverAppBar(context),
                   SliverToBoxAdapter(
                     child: FutureBuilder<List<Payslip>>(
                       future: _payslipsFuture,
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
                         } else if (snapshot.hasError) {
-                          return Center(child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return const Center(child: Text('Chưa có phiếu lương'));
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return const Center(
+                              child: Text('Chưa có phiếu lương'));
                         }
-
-                        List<Payslip> payslipData = snapshot.data!;
-                        return Column(
-                          children: payslipData.map((payslip) {
-                            return Column(
-                              children: [
-                                ItemSettingWidget(
-                                  title: "Basic Salary",
-                                  value: _formatMoney(_parseToDouble(payslip.basicSalary)),
-                                  hasEdit: false,
-                                ),
-                                ItemSettingWidget(
-                                  title: "Actual Work",
-                                  value: _formatMoney(_parseToDouble(payslip.actualWork)),
-                                  hasEdit: false,
-                                ),
-                                ItemSettingWidget(
-                                  title: "Time KPI",
-                                  value: _formatMoney(_parseToDouble(payslip.timeKPI)),
-                                  hasEdit: false,
-                                ),
-                                ItemSettingWidget(
-                                  title: "Job KPI",
-                                  value: _formatMoney(_parseToDouble(payslip.jobKPI)),
-                                  hasEdit: false,
-                                ),
-                                ItemSettingWidget(
-                                  title: "KRA Income",
-                                  value: _formatMoney(_parseToDouble(payslip.kraIncome)),
-                                  hasEdit: false,
-                                ),
-                                ItemSettingWidget(
-                                  title: "Over Time",
-                                  value: _formatMoney(_parseToDouble(payslip.overtime)),
-                                  hasEdit: false,
-                                ),
-                                ItemSettingWidget(
-                                  title: "Bonus",
-                                  value: _formatMoney(_parseToDouble(payslip.bonus)),
-                                  hasEdit: false,
-                                ),
-                                ItemSettingWidget(
-                                  title: "Other Penalties",
-                                  value: _formatMoney(_parseToDouble(payslip.otherPenalties)),
-                                  hasEdit: false,
-                                ),
-                              ],
-                            );
-                          }).toList(),
-                        );
+                        return _buildPayslipList(snapshot.data!);
                       },
                     ),
                   ),
@@ -181,6 +117,104 @@ class _PaymentPageState extends State<PaymentPage> {
         ],
       ),
     );
+  }
+
+  Widget _buildSliverAppBar(BuildContext context) {
+    return SliverAppBar(
+      systemOverlayStyle: StatusBarUtils.statusConfigWithColor(
+        Theme.of(context).colorScheme.primary.withOpacity(opacity),
+      ),
+      backgroundColor:
+          Theme.of(context).colorScheme.primary.withOpacity(opacity),
+      shadowColor: Colors.transparent,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      collapsedHeight: 56,
+      toolbarHeight: 56,
+      expandedHeight: 56,
+      pinned: true,
+      flexibleSpace: FlexibleSpaceBar(
+        centerTitle: false,
+        title: GestureDetector(
+          onTap: selectMonth,
+          child: Container(
+            margin: EdgeInsets.zero,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  DateFormat("MMMM yyyy").format(currentTime),
+                  style: BoldTextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_drop_down,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPayslipList(List<Payslip> payslipData) {
+    return Column(
+      children: payslipData.map((payslip) {
+        return Column(
+          children: [
+            ItemSettingWidget(
+              title: "Basic Salary",
+              value: _formatMoney(_parseToDouble(payslip.basicSalary)),
+              hasEdit: false,
+            ),
+            ItemSettingWidget(
+              title: "Actual Work",
+              value: _formatMoney(_parseToDouble(payslip.actualWork)),
+              hasEdit: false,
+            ),
+            ItemSettingWidget(
+              title: "Time KPI",
+              value: _formatMoney(_parseToDouble(payslip.timeKPI)),
+              hasEdit: false,
+            ),
+            ItemSettingWidget(
+              title: "Job KPI",
+              value: _formatMoney(_parseToDouble(payslip.jobKPI)),
+              hasEdit: false,
+            ),
+            ItemSettingWidget(
+              title: "KRA Income",
+              value: _formatMoney(_parseToDouble(payslip.kraIncome)),
+              hasEdit: false,
+            ),
+            ItemSettingWidget(
+              title: "Over Time",
+              value: _formatMoney(_parseToDouble(payslip.overtime)),
+              hasEdit: false,
+            ),
+            ItemSettingWidget(
+              title: "Bonus",
+              value: _formatMoney(_parseToDouble(payslip.bonus)),
+              hasEdit: false,
+            ),
+            ItemSettingWidget(
+              title: "Other Penalties",
+              value: _formatMoney(_parseToDouble(payslip.otherPenalties)),
+              hasEdit: false,
+            ),
+          ],
+        );
+      }).toList(),
+    );
+  }
+
+  Future<void> _reloadPayslips() async {
+    setState(() {
+      _payslipsFuture = Api.getPayslip();
+    });
   }
 
   Future<void> selectMonth() async {

@@ -1,3 +1,3 @@
 class Constants {
-  static const baseUrl =  "http://192.168.1.57/api/v1/";
+  static const baseUrl =  "https://final-project-be-bvad.onrender.com/api/v1/";
 }

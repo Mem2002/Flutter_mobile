@@ -2,6 +2,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/pages/form_page.dart';
+import 'package:flutter_app/pages/qr_scanner.dart';
 import 'package:flutter_app/pages/setting_page.dart';
 import 'package:flutter_app/pages/attendance_page.dart';
 import 'package:flutter_app/pages/payment_page.dart';
@@ -184,6 +185,15 @@ class HomePageState extends State<HomePage> {
                       height: 56,
                       margin: const EdgeInsets.only(top: 16),
                       child: PrimaryButton(
+                        onPressed: navigateToScanner,
+                        title: AppLocalizations.of(context)!.home_qr_code,
+                        icon: "assets/images/qr_code.png",
+                      ),
+                    ),
+                    Container(
+                      height: 56,
+                      margin: const EdgeInsets.only(top: 16),
+                      child: PrimaryButton(
                         onPressed: navigateToAttendance,
                         title: AppLocalizations.of(context)!.home_attendance,
                         icon: "assets/images/ic_calendar.png",
@@ -272,6 +282,10 @@ class HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  navigateToScanner() {
+    Navigator.of(context).push(SidePageRoute(const ScannerPage()));
   }
 
   navigateToAttendance() {

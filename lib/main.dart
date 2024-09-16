@@ -281,6 +281,7 @@ class HomePageState extends State<MyApp> {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        useMaterial3: true,
       ),
       home: const HomePage(),
       localizationsDelegates: const [
