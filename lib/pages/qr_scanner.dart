@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:qr_scanner_overlay/qr_scanner_overlay.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:flutter_app/pages/result_screen.dart';
+import 'package:flutter_app/utils/constants.dart';
 
 const bgColor = Color(0xfffafafa);
 const blue = Color(0xff0000ff); // Màu xanh dương cho overlay
@@ -10,10 +13,10 @@ class ScannerPage extends StatefulWidget {
   const ScannerPage({super.key});
 
   @override
-  State<ScannerPage> createState() => _ScannerState();
+  State<ScannerPage> createState() => _ScannerPageState();
 }
 
-class _ScannerState extends State<ScannerPage> {
+class _ScannerPageState extends State<ScannerPage> {
   bool isScanCompleted = false;
 
   void closeScreen() {
@@ -86,6 +89,8 @@ class _ScannerState extends State<ScannerPage> {
                 ],
               ),
             )),
+
+            // Khu vực quét QR
             Expanded(
                 flex: 2,
                 child: Stack(
@@ -94,31 +99,24 @@ class _ScannerState extends State<ScannerPage> {
                       controller: controller,
                       onDetect: (capture) {
                         if (!isScanCompleted) {
-                          Future.delayed(const Duration(milliseconds: 500))
-                              .then(
-                            (value) {
-                              final List<Barcode> barcodes = capture.barcodes;
-                              for (final barcode in barcodes) {
-                                String code = barcode.rawValue ?? '---';
-                                isScanCompleted = true;
-                                Navigator.of(context)
-                                    .push(
-                                      MaterialPageRoute(
-                                        builder: (context) => ResultScreen(
-                                          code:
-                                              code, // Truyền code vào ResultScreen
-                                          closeScreen: closeScreen,
-                                          resultText: '',
-                                        ),
-                                      ),
-                                    )
-                                    .then((_) => controller.start());
-                                break; // Ngừng lặp sau khi tìm thấy mã QR đầu tiên
-                              }
-                              controller
-                                  .stop(); // Dừng máy quét sau khi phát hiện mã
-                            },
-                          );
+                          final List<Barcode> barcodes = capture.barcodes;
+                          for (final barcode in barcodes) {
+                            String code = barcode.rawValue ?? '---';
+                            isScanCompleted = true;
+                            Navigator.of(context)
+                                .push(
+                                  MaterialPageRoute(
+                                    builder: (context) => ResultScreen(
+                                      code: code,
+                                      closeScreen: closeScreen,
+                                      resultText: '',
+                                    ),
+                                  ),
+                                )
+                                .then((_) => controller.start());
+                            break; // Ngừng lặp sau khi tìm thấy mã QR đầu tiên
+                          }
+                          controller.stop(); // Dừng máy quét sau khi phát hiện mã
                         }
                       },
                     ),
@@ -144,4 +142,5 @@ class _ScannerState extends State<ScannerPage> {
       ),
     );
   }
+
 }
