@@ -17,6 +17,30 @@ class Api {
   }
 }
 
+
+  static Future<String> sendCodeToBackend(String code) async {
+    final url = Uri.parse('${Constants.baseUrl}/qr-scanner');  // Sử dụng URL từ Constants
+    try {
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'code': code,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return 'Chấm công thành công';
+      } else {
+        return 'Lỗi khi chấm công: ${response.body}';
+      }
+    } catch (e) {
+      return 'Lỗi khi gửi yêu cầu: $e';
+    }
+  }
+
 //  static Future<List<Product>> getProduct() async {
 //   List<Product> products = [];
 //   var url = Uri.parse("${Constants.baseUrl}get_product");

@@ -1,9 +1,8 @@
+// lib/pages/scanner_page.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_app/services/api.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:qr_scanner_overlay/qr_scanner_overlay.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:flutter_app/pages/result_screen.dart';
 import 'package:flutter_app/utils/constants.dart';
 
 const bgColor = Color(0xfffafafa);
@@ -18,12 +17,6 @@ class ScannerPage extends StatefulWidget {
 
 class _ScannerPageState extends State<ScannerPage> {
   bool isScanCompleted = false;
-
-  void closeScreen() {
-    setState(() {
-      isScanCompleted = false; // Reset lại trạng thái khi màn hình đóng
-    });
-  }
 
   final controller = MobileScannerController(
     formats: const [BarcodeFormat.qrCode],
@@ -40,6 +33,19 @@ class _ScannerPageState extends State<ScannerPage> {
   Future<void> dispose() async {
     controller.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleScan(String code) async {
+    final result = await Api.sendCodeToBackend(code); // Gọi hàm từ lớp Api
+    _showSnackBar(result);
+  }
+
+  void _showSnackBar(String message) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.green,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -64,83 +70,78 @@ class _ScannerPageState extends State<ScannerPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
-                child: Container(
-              child: const Column(
+              child: Container(
+                child: const Column(
+                  children: [
+                    Text(
+                      "Place the QR code in the area",
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "Scanning will be started automatically",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Khu vực quét QR
+            Expanded(
+              flex: 2,
+              child: Stack(
                 children: [
-                  Text(
-                    "Place the QR code in the area",
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1,
-                    ),
+                  MobileScanner(
+                    controller: controller,
+                    onDetect: (capture) {
+                      if (!isScanCompleted) {
+                        final List<Barcode> barcodes = capture.barcodes;
+                        for (final barcode in barcodes) {
+                          String code = barcode.rawValue ?? '---';
+                          isScanCompleted = true;
+
+                          // Xử lý mã QR
+                          _handleScan(code);
+
+                          // Ngừng lặp sau khi tìm thấy mã QR đầu tiên
+                          break;
+                        }
+                        controller.stop(); // Dừng máy quét sau khi phát hiện mã
+                      }
+                    },
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "Scanning will be started automatically",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black54,
-                    ),
+                  QRScannerOverlay(
+                    overlayColor: const Color.fromARGB(0, 250, 250, 250),
                   ),
                 ],
               ),
-            )),
-
-            // Khu vực quét QR
+            ),
             Expanded(
-                flex: 2,
-                child: Stack(
-                  children: [
-                    MobileScanner(
-                      controller: controller,
-                      onDetect: (capture) {
-                        if (!isScanCompleted) {
-                          final List<Barcode> barcodes = capture.barcodes;
-                          for (final barcode in barcodes) {
-                            String code = barcode.rawValue ?? '---';
-                            isScanCompleted = true;
-                            Navigator.of(context)
-                                .push(
-                                  MaterialPageRoute(
-                                    builder: (context) => ResultScreen(
-                                      code: code,
-                                      closeScreen: closeScreen,
-                                      resultText: '',
-                                    ),
-                                  ),
-                                )
-                                .then((_) => controller.start());
-                            break; // Ngừng lặp sau khi tìm thấy mã QR đầu tiên
-                          }
-                          controller.stop(); // Dừng máy quét sau khi phát hiện mã
-                        }
-                      },
-                    ),
-                    QRScannerOverlay(
-                      overlayColor: const Color.fromARGB(0, 250, 250, 250),
-                    ),
-                  ],
-                )),
-            Expanded(
-                child: Container(
-              alignment: Alignment.center,
-              child: const Text(
-                "Developed by .......",
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 18,
-                  letterSpacing: 1,
+              child: Container(
+                alignment: Alignment.center,
+                child: const Text(
+                  "Developed by .......",
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 18,
+                    letterSpacing: 1,
+                  ),
                 ),
               ),
-            ))
+            ),
           ],
         ),
       ),
     );
   }
-
 }
