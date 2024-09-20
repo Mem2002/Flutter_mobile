@@ -220,11 +220,11 @@ class HomePageState extends State<HomePage> {
                     Container(
                       height: 56,
                       margin: const EdgeInsets.only(top: 16),
-                      child: PrimaryButton(
-                        onPressed: navigateToSetting,
-                        title: AppLocalizations.of(context)!.home_setting,
-                        icon: "assets/images/ic_setting.png",
-                      ),
+                      // child: PrimaryButton(
+                      //   onPressed: navigateToSetting,
+                      //   title: AppLocalizations.of(context)!.home_setting,
+                      //   icon: "assets/images/ic_setting.png",
+                      // ),
                     )
                   ],
                 ),
@@ -300,9 +300,9 @@ class HomePageState extends State<HomePage> {
     Navigator.of(context).push(SidePageRoute(const FormPage()));
   }
 
-  navigateToSetting() {
-    Navigator.of(context).push(SidePageRoute(const SettingPage()));
-  }
+  // navigateToSetting() {
+  //   Navigator.of(context).push(SidePageRoute(const SettingPage()));
+  // }
 
   @override
   void initState() {

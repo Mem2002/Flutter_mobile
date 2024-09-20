@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_app/apis/authentications/dtos/login_response.dart';
 import 'package:flutter_app/models/payslipModel.dart'; // Đổi tên file model cho phù hợp
 import 'package:flutter_app/utils/constants.dart';
 import 'package:http/http.dart' as http;
@@ -18,7 +19,7 @@ class Api {
 }
 
 
-  static Future<String> sendCodeToBackend(String code) async {
+ static Future<String> sendCodeToBackend(String code, String scanTime) async {
     final url = Uri.parse('${Constants.baseUrl}/qr-scanner');  // Sử dụng URL từ Constants
     try {
       final response = await http.post(
@@ -28,6 +29,7 @@ class Api {
         },
         body: jsonEncode(<String, String>{
           'code': code,
+          'scanTime': scanTime, // Thêm thời gian vào body request
         }),
       );
 
@@ -41,47 +43,39 @@ class Api {
     }
   }
 
-//  static Future<List<Product>> getProduct() async {
-//   List<Product> products = [];
-//   var url = Uri.parse("${Constants.baseUrl}get_product");
+static Future<LoginResponse?> logInAsync(String email, String password) async {
+  try {
+    final url = Uri.parse('${Constants.baseUrl}login'); // Thay đổi URL bằng cách sử dụng Uri.parse
 
-//   try {
-//     final res = await http.get(url);
+    // Kiểm tra xem email và password có hợp lệ không
+    if (email.trim().isEmpty || password.trim().isEmpty) {
+      print('Email hoặc mật khẩu không được để trống');
+      return null; // Trả về null nếu dữ liệu không hợp lệ
+    }
 
-//     // Log status code của phản hồi
-//     print('Status code: ${res.statusCode}');
+    var res = await http.post(
+      url, // Sử dụng URL đã tạo
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'email': email.trim(),
+        'password': password.trim(),
+      }),
+    );
 
-//     // Log nội dung của phản hồi
-//     print('Response body: ${res.body}');
+    // Kiểm tra phản hồi từ API
+    if (res.statusCode == 200) {
+      var body = loginResponseFromJson(res.body);
+      return body;
+    } else {
+      print('Lỗi từ server: ${res.statusCode} - ${res.body}');
+      return null;
+    }
+  } catch (e) {
+    print('Đã xảy ra lỗi: $e');
+    return null; // Trả về null nếu xảy ra lỗi
+  }
+}
 
-//     if (res.statusCode == 200) {
-//       var data = jsonDecode(res.body);
-
-//       // Log dữ liệu được decode
-//       print('Decoded data: $data');
-
-//       if (data is List) { // Kiểm tra nếu data là danh sách
-//         products = data.map<Product>((value) {
-//           // Log từng sản phẩm trong danh sách trước khi chuyển đổi
-//           print('Processing product: $value');
-
-//           return Product(
-//             id: value['_id']?.toString() ?? '', // Đảm bảo giá trị không phải null
-//             name: value['pname'] ?? '',
-//             desc: value['pdesc'] ?? '',
-//             price: value['pprice'] ?? '',
-//             pimagePath: value['pimagePath'] ?? '',
-//           );
-//         }).toList();
-//       } else {
-//         print("Unexpected data format: $data");
-//       }
-//     } else {
-//       print("Failed to load products. Status code: ${res.statusCode}");
-//     }
-//   } catch (e) {
-//     print("Error occurred: ${e.toString()}");
-//   }
-//   return products;
-// }
 }

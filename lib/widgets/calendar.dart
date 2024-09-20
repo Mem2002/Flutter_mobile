@@ -11,7 +11,11 @@ class CalendarWidget extends StatefulWidget {
   DateTime startDay;
   Function(AttendanceData) onpress;
 
-  CalendarWidget({super.key, required this.data, required this.onpress,required this.startDay});
+  CalendarWidget(
+      {super.key,
+      required this.data,
+      required this.onpress,
+      required this.startDay});
 
   @override
   State<StatefulWidget> createState() => CalendarWidgetState();

@@ -2,6 +2,7 @@
 
 import 'package:flutter_app/pages/home_page.dart';
 import 'package:flutter_app/pages/register_page.dart';
+import 'package:flutter_app/services/api.dart';
 import 'package:flutter_app/styles/text_styles.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
@@ -22,9 +23,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginState extends State<LoginPage> {
-  final LoginController loginController = GetIt.instance.get<LoginController>();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  // final LoginController loginController = GetIt.instance.get<LoginController>();
+  final TextEditingController emailController =
+      TextEditingController(text: "mem@gmail.com");
+  final TextEditingController passwordController =
+      TextEditingController(text: "Mem@@382002");
   bool hidePassword = true;
   String? emailError;
   String? passwordError;
@@ -159,34 +162,7 @@ class LoginState extends State<LoginPage> {
               ),
             ),
           ),
-          Positioned(
-            height: 50,
-            left: 24,
-            right: 24,
-            bottom: 20,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    FadePageRoute(const RegisterPage()),
-                    (Route<dynamic> route) => false);
-              },
-              child: Center(
-                child: RichText(
-                  text: TextSpan(
-                    text: AppLocalizations.of(context)!.question_login,
-                    style: const TextStyle(
-                      color: Colors.white,
-                    ),
-                    children: const [
-                      TextSpan(
-                        text: ' Register',
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          )
+      
         ],
       ),
     );
@@ -195,21 +171,48 @@ class LoginState extends State<LoginPage> {
   login() async {
     var email = emailController.text;
     var password = passwordController.text;
-    var res = await loginController.loginAsync(email, password);
-    if (res == null || res.token?.isNotEmpty != true) {
+
+    // Hiển thị loading dialog khi đang gửi yêu cầu
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.loading,
+      title: 'Đang kết nối...',
+    );
+
+    try {
+      // Gọi API đăng nhập
+      var res = await Api.logInAsync(email, password);
+
+      // Đóng loading dialog sau khi có kết quả
+      Navigator.of(context).pop();
+
+      // Kiểm tra kết quả trả về từ API
+      if (res == null || res.dt.accessToken.isEmpty != false) {
+        // Nếu không có token hoặc thông tin không chính xác
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          title: 'Lỗi',
+          text: res?.em ?? "Sai mật khẩu hoặc email",
+        );
+      } else {
+        // Nếu đăng nhập thành công, điều hướng đến trang chủ
+        var nav = Navigator.of(context);
+        nav.pushAndRemoveUntil(
+            SidePageRoute(const HomePage()), (Route<dynamic> route) => false);
+      }
+    } catch (error) {
+      // Xử lý lỗi nếu gặp sự cố kết nối hoặc lỗi từ server
+      Navigator.of(context).pop(); // Đóng loading dialog
       QuickAlert.show(
         context: context,
         type: QuickAlertType.error,
-        title: 'Oops...',
-        text: res?.message ?? "Sai mật khẩu hoặc email",
+        title: 'Lỗi kết nối',
+        text: "Không thể kết nối đến server. Vui lòng thử lại sau.",
       );
-      return;
     }
-    var nav = Navigator.of(context);
-    nav.pushAndRemoveUntil(
-        SidePageRoute(const HomePage()), (Route<dynamic> route) => false);
   }
-  // pushAndRemoveUntil là một phương thức của Navigator giúp điều hướng đến một trang mới 
+  // pushAndRemoveUntil là một phương thức của Navigator giúp điều hướng đến một trang mới
   // const giúp tối ưu hóa hiệu suất khi đối tượng không thay đổi.
 
 //   (Route<dynamic> route) => false:

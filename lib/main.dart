@@ -283,7 +283,7 @@ class HomePageState extends State<MyApp> {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: LoginPage(),
       localizationsDelegates: const [
         AppLocalizations.delegate, // Add this line
         GlobalWidgetsLocalizations.delegate,

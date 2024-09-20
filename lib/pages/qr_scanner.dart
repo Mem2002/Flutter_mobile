@@ -36,7 +36,14 @@ class _ScannerPageState extends State<ScannerPage> {
   }
 
   Future<void> _handleScan(String code) async {
-    final result = await Api.sendCodeToBackend(code); // Gọi hàm từ lớp Api
+      if (code.isEmpty || code == '---') {
+    _showSnackBar('QR code is required');
+    return;
+  }
+     // Lấy thời gian thực
+    String scanTime = DateTime.now().toIso8601String(); // Thời gian hiện tại
+
+    final result = await Api.sendCodeToBackend(code, scanTime); // Gọi hàm từ lớp Api
     _showSnackBar(result);
   }
 

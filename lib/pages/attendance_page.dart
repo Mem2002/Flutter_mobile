@@ -108,48 +108,6 @@ class AttendancePageState extends State<AttendancePage> {
                   },
                 ),
               ),
-              // SliverToBoxAdapter(
-              //   child: ValueListenableBuilder(
-              //     valueListenable: controller.report,
-              //     builder: (context, value, child) {
-              //       return Row(
-              //         children: [
-              //           Expanded(
-              //             child: Container(
-              //               alignment: Alignment.centerLeft,
-              //               child: ReportDayWidget(
-              //                 title: "Tổng công",
-              //                 max: 24.0,
-              //                 value: (value?.days ?? 0.0),
-              //               ),
-              //             ),
-              //           ),
-              //           Expanded(
-              //             child: ReportDayWidget(
-              //               title: "Đi muộn",
-              //               max: 24.0,
-              //               value: (value?.countLate ?? 1) * 1.0,
-              //             ),
-              //           ),
-              //           Expanded(
-              //             child: Container(
-              //               alignment: Alignment.centerRight,
-              //               child: ReportDayWidget(
-              //                 title: "Ngày phép",
-              //                 max:
-              //                     (value?.totalWorkRemaining ?? [0.0, 1.0])[1] *
-              //                         1.0,
-              //                 value: ((value?.totalWorkRemaining ??
-              //                         [0.0, 1.0])[1]) *
-              //                     1.0,
-              //               ),
-              //             ),
-              //           ),
-              //         ],
-              //       );
-              //     },
-              //   ),
-              // ),
               SliverToBoxAdapter(
                 child: ValueListenableBuilder(
                   valueListenable: controller.today,

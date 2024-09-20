@@ -1,3 +1,7 @@
+// To parse this JSON data, do
+//
+//     final loginResponse = loginResponseFromJson(jsonString);
+
 import 'dart:convert';
 
 LoginResponse loginResponseFromJson(String str) =>
@@ -6,52 +10,69 @@ LoginResponse loginResponseFromJson(String str) =>
 String loginResponseToJson(LoginResponse data) => json.encode(data.toJson());
 
 class LoginResponse {
-  LoginResponse(
-      {required this.user, required this.error, this.token, this.message});
+  String em;
+  int ec;
+  Dt dt;
 
-  User user;
-  bool error;
-  String? token;
-  String? message;
+  LoginResponse({
+    required this.em,
+    required this.ec,
+    required this.dt,
+  });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
-        user: User.fromJson(json["user"]),
-        error: json["error"],
-        token: json["token"],
-        message: json["message"],
+        em: json["EM"],
+        ec: json["EC"],
+        dt: Dt.fromJson(json["DT"]),
       );
 
   Map<String, dynamic> toJson() => {
-        "user": user.toJson(),
-        "error": error,
-        "token": token,
-        "message": message
+        "EM": em,
+        "EC": ec,
+        "DT": dt.toJson(),
       };
 }
 
-class User {
-  User({
-    required this.id,
-    this.name,
-    this.phone,
+class Dt {
+  String accessToken;
+  String expiresIn;
+  DataLogin data;
+
+  Dt({
+    required this.accessToken,
+    required this.expiresIn,
+    required this.data,
   });
 
-  int id;
-  String? name;
-  String? phone;
+  factory Dt.fromJson(Map<String, dynamic> json) => Dt(
+        accessToken: json["access_token"],
+        expiresIn: json["expiresIn"],
+        data: DataLogin.fromJson(json["data"]),
+      );
 
-//   fromJson: Chuyển đổi từ JSON sang đối tượng Dart. Dùng khi bạn nhận dữ liệu JSON từ bên ngoài và cần tạo đối tượng Dart.
-// toJson: Chuyển đổi từ đối tượng Dart sang JSON. Dùng khi bạn cần gửi dữ liệu đối tượng Dart ra bên ngoài hoặc lưu trữ nó dưới dạng JSON.
+  Map<String, dynamic> toJson() => {
+        "access_token": accessToken,
+        "expiresIn": expiresIn,
+        "data": data.toJson(),
+      };
+}
 
-  factory User.fromJson(Map<String, dynamic> json) => User(
+class DataLogin {
+  String id;
+  String username;
+
+  DataLogin({
+    required this.id,
+    required this.username,
+  });
+
+  factory DataLogin.fromJson(Map<String, dynamic> json) => DataLogin(
         id: json["id"],
-        name: json["name"],
-        phone: json["phone"],
+        username: json["username"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "name": name,
-        "phone": phone,
+        "username": username,
       };
 }

@@ -56,19 +56,19 @@ extension GetItInjectableX on _i1.GetIt {
           gh<_i5.HeaderProvider>(),
         ));
     gh.factory<_i7.AttendanceApi>(() => _i7.AttendanceApi(gh<_i6.IHttpBase>()));
-    gh.factory<_i8.AuthenticationApi>(
-        () => _i8.AuthenticationApi(gh<_i6.IHttpBase>()));
+    // gh.factory<_i8.AuthenticationApi>(
+    //     () => _i8.AuthenticationApi(gh<_i6.IHttpBase>()));
     gh.factory<_i9.PayslipApi>(() => _i9.PayslipApi(gh<_i6.IHttpBase>()));
     gh.factory<_i10.ProfileApi>(() => _i10.ProfileApi(gh<_i6.IHttpBase>()));
     gh.factory<_i11.ProposeApi>(() => _i11.ProposeApi(gh<_i6.IHttpBase>()));
-    gh.factory<_i12.IAuthenticationService>(() => _i12.AuthenticationService(
-          gh<_i8.AuthenticationApi>(),
-          gh<_i5.HeaderProvider>(),
-        ));
-    gh.factory<_i13.LoginController>(
-        () => _i13.LoginController(gh<_i12.IAuthenticationService>()));
-    gh.factory<_i14.RegisterController>(
-        () => _i14.RegisterController(gh<_i12.IAuthenticationService>()));
+    // gh.factory<_i12.IAuthenticationService>(() => _i12.AuthenticationService(
+    //       gh<_i8.AuthenticationApi>(),
+    //       gh<_i5.HeaderProvider>(),
+    //     ));
+    // gh.factory<_i13.LoginController>(
+    //     () => _i13.LoginController(gh<_i12.IAuthenticationService>()));
+    // gh.factory<_i14.RegisterController>(
+    //     () => _i14.RegisterController(gh<_i12.IAuthenticationService>()));
     gh.factory<_i15.IApplicationService>(() => _i15.ApplicationService(
           gh<_i7.AttendanceApi>(),
           gh<_i9.PayslipApi>(),
@@ -85,10 +85,10 @@ extension GetItInjectableX on _i1.GetIt {
         () => _i19.HomeController(gh<_i15.IApplicationService>()));
     gh.factory<_i20.PaymentController>(
         () => _i20.PaymentController(gh<_i15.IApplicationService>()));
-    gh.factory<_i21.SettingController>(() => _i21.SettingController(
-          gh<_i15.IApplicationService>(),
-          gh<_i12.IAuthenticationService>(),
-        ));
+    // gh.factory<_i21.SettingController>(() => _i21.SettingController(
+    //       gh<_i15.IApplicationService>(),
+    //       gh<_i12.IAuthenticationService>(),
+    //     ));
     return this;
   }
 }
