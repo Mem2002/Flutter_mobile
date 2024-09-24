@@ -6,6 +6,7 @@ import 'package:flutter_app/services/api.dart';
 import 'package:flutter_app/styles/text_styles.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/text_utils.dart';
 import 'package:flutter/material.dart';
 
@@ -162,7 +163,6 @@ class LoginState extends State<LoginPage> {
               ),
             ),
           ),
-      
         ],
       ),
     );
@@ -176,7 +176,7 @@ class LoginState extends State<LoginPage> {
     QuickAlert.show(
       context: context,
       type: QuickAlertType.loading,
-      title: 'Đang kết nối...',
+      title: 'Connecting...',
     );
 
     try {
@@ -187,19 +187,44 @@ class LoginState extends State<LoginPage> {
       Navigator.of(context).pop();
 
       // Kiểm tra kết quả trả về từ API
-      if (res == null || res.dt.accessToken.isEmpty != false) {
+      if (res == null || res.dt.accessToken.isEmpty) {
         // Nếu không có token hoặc thông tin không chính xác
         QuickAlert.show(
           context: context,
           type: QuickAlertType.error,
-          title: 'Lỗi',
-          text: res?.em ?? "Sai mật khẩu hoặc email",
+          title: 'Error',
+          text: res?.em ?? "Wrong password or email ",
         );
       } else {
-        // Nếu đăng nhập thành công, điều hướng đến trang chủ
-        var nav = Navigator.of(context);
-        nav.pushAndRemoveUntil(
-            SidePageRoute(const HomePage()), (Route<dynamic> route) => false);
+        // Lấy accessToken và in ra console
+        var accessToken = res.dt.accessToken;
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('accessToken', accessToken);
+        print('Access Token: $accessToken'); // In accessToken ra console
+
+        // Kiểm tra nếu email là "admin"
+
+        // Kiểm tra nếu group_name là "Employee"
+        var groupName = res.dt.data.groupWithRole.group.groupName;
+        if (groupName == "Employee") {
+          // Lấy data.id khi group_name là "Employee"
+          var userId = res.dt.data.id;
+          print('User ID: $userId');
+          // Nếu đăng nhập thành công, điều hướng đến trang chủ
+          var nav = Navigator.of(context);
+          nav.pushAndRemoveUntil(
+              SidePageRoute(const HomePage()), (Route<dynamic> route) => false);
+        } else {
+          // Nếu người dùng không thuộc nhóm Employee
+          Navigator.of(context).pop(); // Đóng loading dialog
+          QuickAlert.show(
+            context: context,
+            type: QuickAlertType.error,
+            title: 'Error',
+            text: 'The user does not belong to the Employee group',
+          );
+        }
       }
     } catch (error) {
       // Xử lý lỗi nếu gặp sự cố kết nối hoặc lỗi từ server
@@ -207,8 +232,8 @@ class LoginState extends State<LoginPage> {
       QuickAlert.show(
         context: context,
         type: QuickAlertType.error,
-        title: 'Lỗi kết nối',
-        text: "Không thể kết nối đến server. Vui lòng thử lại sau.",
+        title: 'Connection error',
+        text: "Unable to connect to server. Please try again later.",
       );
     }
   }

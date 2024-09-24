@@ -1,12 +1,10 @@
-// lib/pages/scanner_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_app/services/api.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:qr_scanner_overlay/qr_scanner_overlay.dart';
-import 'package:flutter_app/utils/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const bgColor = Color(0xfffafafa);
-const blue = Color(0xff0000ff); // Màu xanh dương cho overlay
 
 class ScannerPage extends StatefulWidget {
   const ScannerPage({super.key});
@@ -17,40 +15,54 @@ class ScannerPage extends StatefulWidget {
 
 class _ScannerPageState extends State<ScannerPage> {
   bool isScanCompleted = false;
-
   final controller = MobileScannerController(
     formats: const [BarcodeFormat.qrCode],
     detectionSpeed: DetectionSpeed.noDuplicates,
   );
 
+  String userId = '';
+  String accessToken = '';
+
   @override
   void initState() {
-    controller.start();
     super.initState();
+    _getUserIdAndToken();
+    controller.start();
+  }
+
+  Future<void> _getUserIdAndToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      accessToken = prefs.getString('accessToken') ?? '';
+    });
+
+    // Debug: In giá trị userId
+    // print('User ID: $userId');
+    //  accessToken = prefs.getString('accessToken') ?? '';
+    print('User ID: $accessToken');
   }
 
   @override
-  Future<void> dispose() async {
+  void dispose() {
     controller.dispose();
     super.dispose();
   }
 
   Future<void> _handleScan(String code) async {
-      if (code.isEmpty || code == '---') {
-    _showSnackBar('QR code is required');
-    return;
-  }
-     // Lấy thời gian thực
-    String scanTime = DateTime.now().toIso8601String(); // Thời gian hiện tại
+    if (code.isEmpty || code == '---') {
+      _showSnackBar('QR code is required');
+      return;
+    }
 
-    final result = await Api.sendCodeToBackend(code, scanTime); // Gọi hàm từ lớp Api
+    // Gọi API với code, scanTime, userId
+    final result = await Api.sendCodeToBackend(code);
     _showSnackBar(result);
   }
 
   void _showSnackBar(String message) {
     final snackBar = SnackBar(
       content: Text(message),
-      backgroundColor: Colors.green,
+      backgroundColor: message.startsWith('Error') ? Colors.red : Colors.green,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
@@ -76,34 +88,29 @@ class _ScannerPageState extends State<ScannerPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: Container(
-                child: const Column(
-                  children: [
-                    Text(
-                      "Place the QR code in the area",
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
-                      ),
+            const Expanded(
+              child: Column(
+                children: [
+                  Text(
+                    "Place the QR code in the area",
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
                     ),
-                    SizedBox(
-                      height: 10,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Scanning will be started automatically",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black54,
                     ),
-                    Text(
-                      "Scanning will be started automatically",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black54,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            // Khu vực quét QR
             Expanded(
               flex: 2,
               child: Stack(
@@ -116,14 +123,10 @@ class _ScannerPageState extends State<ScannerPage> {
                         for (final barcode in barcodes) {
                           String code = barcode.rawValue ?? '---';
                           isScanCompleted = true;
-
-                          // Xử lý mã QR
                           _handleScan(code);
-
-                          // Ngừng lặp sau khi tìm thấy mã QR đầu tiên
+                          controller.stop();
                           break;
                         }
-                        controller.stop(); // Dừng máy quét sau khi phát hiện mã
                       }
                     },
                   ),

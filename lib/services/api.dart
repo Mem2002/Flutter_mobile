@@ -3,33 +3,44 @@ import 'package:flutter_app/apis/authentications/dtos/login_response.dart';
 import 'package:flutter_app/models/payslipModel.dart'; // Đổi tên file model cho phù hợp
 import 'package:flutter_app/utils/constants.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Api {
+  static Future<List<Payslip>> getPayslip(String accessToken) async {
+    final response =
+        await http.get(Uri.parse('${Constants.baseUrl}payslip'), headers: {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $accessToken'
+    });
 
-  static Future<List<Payslip>> getPayslip() async {
-  final response = await http.get(Uri.parse('${Constants.baseUrl}createPayslip'));
-
-  if (response.statusCode == 200) {
-    List<dynamic> body = jsonDecode(response.body);
-    List<Payslip> payslips = body.map((item) => Payslip.fromJson(item)).toList();
-    return payslips;
-  } else {
-    throw Exception('Failed to load payslips');
+    if (response.statusCode == 200) {
+      List<dynamic> body = jsonDecode(response.body);
+      return body.map((item) => Payslip.fromJson(item)).toList();
+    } else {
+      print('Error: ${response.statusCode} - ${response.body}');
+      throw Exception('Failed to load payslips');
+    }
   }
-}
 
+  static Future<String> sendCodeToBackend(String code) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedToken = prefs.getString('accessToken');
 
- static Future<String> sendCodeToBackend(String code, String scanTime) async {
-    final url = Uri.parse('${Constants.baseUrl}/qr-scanner');  // Sử dụng URL từ Constants
+    if (storedToken == null) {
+      throw Exception('No access token found.');
+    }
+
+    final url = Uri.parse('${Constants.baseUrl}qr-scanner');
     try {
       final response = await http.post(
         url,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization':
+              'Bearer $storedToken', // Include the token in the header
         },
-        body: jsonEncode(<String, String>{
+        body: jsonEncode(<String, dynamic>{
           'code': code,
-          'scanTime': scanTime, // Thêm thời gian vào body request
         }),
       );
 
@@ -43,39 +54,66 @@ class Api {
     }
   }
 
-static Future<LoginResponse?> logInAsync(String email, String password) async {
-  try {
-    final url = Uri.parse('${Constants.baseUrl}login'); // Thay đổi URL bằng cách sử dụng Uri.parse
+  static Future<LoginResponse?> logInAsync(
+      String email, String password) async {
+    try {
+      final url = Uri.parse('${Constants.baseUrl}login');
 
-    // Kiểm tra xem email và password có hợp lệ không
-    if (email.trim().isEmpty || password.trim().isEmpty) {
-      print('Email hoặc mật khẩu không được để trống');
-      return null; // Trả về null nếu dữ liệu không hợp lệ
+      // Kiểm tra xem email và password có hợp lệ không
+      if (email.trim().isEmpty || password.trim().isEmpty) {
+        print('Email hoặc mật khẩu không được để trống');
+        return null; // Trả về null nếu dữ liệu không hợp lệ
+      }
+
+      var res = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'email': email.trim(),
+          'password': password.trim(),
+        }),
+      );
+
+      // Kiểm tra phản hồi từ API
+      if (res.statusCode == 200) {
+        var body = loginResponseFromJson(res.body);
+
+        // Kiểm tra nếu có dữ liệu group
+        if (body.dt?.data?.groupWithRole?.group != null) {
+          String groupName = body.dt!.data!.groupWithRole!.group!.groupName;
+
+          // Chỉ cho phép đăng nhập nếu group_name là "Employee"
+          if (groupName == "Employee") {
+            return body; // Trả về kết quả nếu group_name là Employee
+          } else {
+            print('Người dùng không thuộc nhóm Employee');
+            return null; // Trả về null nếu không phải Employee
+          }
+        } else {
+          print('Không lấy được thông tin nhóm từ API');
+          return null;
+        }
+      } else {
+        print('Lỗi từ server: ${res.statusCode} - ${res.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Đã xảy ra lỗi: $e');
+      return null; // Trả về null nếu xảy ra lỗi
     }
-
-    var res = await http.post(
-      url, // Sử dụng URL đã tạo
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'email': email.trim(),
-        'password': password.trim(),
-      }),
-    );
-
-    // Kiểm tra phản hồi từ API
-    if (res.statusCode == 200) {
-      var body = loginResponseFromJson(res.body);
-      return body;
-    } else {
-      print('Lỗi từ server: ${res.statusCode} - ${res.body}');
-      return null;
-    }
-  } catch (e) {
-    print('Đã xảy ra lỗi: $e');
-    return null; // Trả về null nếu xảy ra lỗi
   }
-}
 
+  static Future<List<Payslip>> getPayslipWithStoredToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedToken = prefs.getString('accessToken');
+
+    if (storedToken != null) {
+      return await getPayslip(
+          storedToken); // Call your existing getPayslip method
+    } else {
+      throw Exception('No access token found.');
+    }
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app/controllers/payment_controller.dart';
 import 'package:flutter_app/styles/text_styles.dart';
 import 'package:flutter_app/styles/themes.dart';
 import 'package:flutter_app/utils/statusbar_utils.dart';
@@ -27,7 +28,13 @@ class _PaymentPageState extends State<PaymentPage> {
     super.initState();
     scrollController.addListener(scrollChange);
     _initializeDate();
-    _payslipsFuture = Api.getPayslip(); // Load initial payslip data
+    _loadPayslips();
+  }
+
+  Future<void> _loadPayslips() async {
+    setState(() {
+      _payslipsFuture = Api.getPayslipWithStoredToken();
+    });
   }
 
   void _initializeDate() {
@@ -52,18 +59,13 @@ class _PaymentPageState extends State<PaymentPage> {
     });
   }
 
-  double? _parseToDouble(dynamic value) {
-    if (value is double) return value;
-    if (value is String) return double.tryParse(value);
-    return null;
-  }
-
   String _formatMoney(double? amount) {
     if (amount == null || amount.isNaN || amount.isNegative) {
       return 'N/A';
     }
     return NumberFormat.currency(
-      customPattern: "#,##0.### đ",
+      locale: 'vi_VN',
+      symbol: 'đ',
       decimalDigits: 0,
     ).format(amount);
   }
@@ -85,7 +87,7 @@ class _PaymentPageState extends State<PaymentPage> {
           ),
           SafeArea(
             child: RefreshIndicator(
-              onRefresh: _reloadPayslips,
+              onRefresh: _loadPayslips,
               child: CustomScrollView(
                 controller: scrollController,
                 slivers: [
@@ -94,17 +96,12 @@ class _PaymentPageState extends State<PaymentPage> {
                     child: FutureBuilder<List<Payslip>>(
                       future: _payslipsFuture,
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
                         } else if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          return const Center(
-                              child: Text('Chưa có phiếu lương'));
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return const Center(child: Text('Chưa có phiếu lương'));
                         }
                         return _buildPayslipList(snapshot.data!);
                       },
@@ -124,8 +121,7 @@ class _PaymentPageState extends State<PaymentPage> {
       systemOverlayStyle: StatusBarUtils.statusConfigWithColor(
         Theme.of(context).colorScheme.primary.withOpacity(opacity),
       ),
-      backgroundColor:
-          Theme.of(context).colorScheme.primary.withOpacity(opacity),
+      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(opacity),
       shadowColor: Colors.transparent,
       foregroundColor: Theme.of(context).colorScheme.onPrimary,
       collapsedHeight: 56,
@@ -163,58 +159,50 @@ class _PaymentPageState extends State<PaymentPage> {
   Widget _buildPayslipList(List<Payslip> payslipData) {
     return Column(
       children: payslipData.map((payslip) {
-        return Column(
-          children: [
-            ItemSettingWidget(
-              title: "Basic Salary",
-              value: _formatMoney(_parseToDouble(payslip.basicSalary)),
-              hasEdit: false,
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Card(
+            elevation: 2,
+            child: Column(
+              children: _buildPayslipDetails(payslip),
             ),
-            ItemSettingWidget(
-              title: "Actual Work",
-              value: _formatMoney(_parseToDouble(payslip.actualWork)),
-              hasEdit: false,
-            ),
-            ItemSettingWidget(
-              title: "Time KPI",
-              value: _formatMoney(_parseToDouble(payslip.timeKPI)),
-              hasEdit: false,
-            ),
-            ItemSettingWidget(
-              title: "Job KPI",
-              value: _formatMoney(_parseToDouble(payslip.jobKPI)),
-              hasEdit: false,
-            ),
-            ItemSettingWidget(
-              title: "KRA Income",
-              value: _formatMoney(_parseToDouble(payslip.kraIncome)),
-              hasEdit: false,
-            ),
-            ItemSettingWidget(
-              title: "Over Time",
-              value: _formatMoney(_parseToDouble(payslip.overtime)),
-              hasEdit: false,
-            ),
-            ItemSettingWidget(
-              title: "Bonus",
-              value: _formatMoney(_parseToDouble(payslip.bonus)),
-              hasEdit: false,
-            ),
-            ItemSettingWidget(
-              title: "Other Penalties",
-              value: _formatMoney(_parseToDouble(payslip.otherPenalties)),
-              hasEdit: false,
-            ),
-          ],
+          ),
         );
       }).toList(),
     );
   }
 
-  Future<void> _reloadPayslips() async {
-    setState(() {
-      _payslipsFuture = Api.getPayslip();
-    });
+  List<Widget> _buildPayslipDetails(Payslip payslip) {
+    List<Widget> details = [];
+    
+    // Example of using your PayslipKey structure
+    List<PayslipKey> keys = [
+      PayslipKey(key: "Mức lương cơ bản", value: payslip.basicSalary, type: PayslipType.money),
+      PayslipKey(key: "Thời gian làm việc thực tế", value: payslip.actualWork, type: PayslipType.money),
+      PayslipKey(key: "KPI thời gian", value: payslip.timeKPI, type: PayslipType.money),
+      PayslipKey(key: "KPI công việc", value: payslip.jobKPI, type: PayslipType.money),
+      PayslipKey(key: "Thu nhập KRA", value: payslip.kraIncome, type: PayslipType.money),
+      PayslipKey(key: "Làm thêm", value: payslip.overtime, type: PayslipType.money),
+      PayslipKey(key: "Thưởng", value: payslip.bonus, type: PayslipType.money),
+      PayslipKey(key: "Phạt khác", value: payslip.otherPenalties, type: PayslipType.money),
+    ];
+
+    for (var key in keys) {
+      details.add(
+        ItemSettingWidget(
+          title: key.key,
+          value: _formatMoney(_parseToDouble(key.value)),
+          hasEdit: false,
+        ),
+      );
+    }
+    return details;
+  }
+
+  double? _parseToDouble(dynamic value) {
+    if (value is double) return value;
+    if (value is String) return double.tryParse(value);
+    return null;
   }
 
   Future<void> selectMonth() async {
@@ -228,7 +216,7 @@ class _PaymentPageState extends State<PaymentPage> {
     if (selectedDate != null) {
       setState(() {
         currentTime = selectedDate;
-        _payslipsFuture = Api.getPayslip();
+        _loadPayslips();
       });
     }
   }

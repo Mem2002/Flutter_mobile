@@ -96,7 +96,7 @@ class AttendancePageState extends State<AttendancePage> {
                                     Visibility(
                                         visible: p0.outTime != null,
                                         child: Text(
-                                            "Giờ ra : ${dateFormat.format((p0.outTime ?? DateTime.now()).toLocal())}"))
+                                            "Giờ ra : ${dateFormat.format((p0.outTime ?? DateTime.now()).toLocal())}")),
                                   ],
                                 ),
                               ),
