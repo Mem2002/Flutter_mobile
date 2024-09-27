@@ -6,7 +6,7 @@ import 'package:flutter_app/styles/themes.dart';
 import 'package:flutter_app/utils/statusbar_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:mat_month_picker_dialog/mat_month_picker_dialog.dart';
-import '../models/payslipModel.dart';
+import '../models/payslip_model.dart';
 import '../services/api.dart';
 import '../widgets/item_setting.dart';
 
