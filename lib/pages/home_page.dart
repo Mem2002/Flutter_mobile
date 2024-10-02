@@ -106,24 +106,24 @@ class HomePageState extends State<HomePage> {
                           )),
                         ],
                       ),
-                      // Visibility(
-                      //   // visible: activeDevice != deviceId,
-                      //   child: Container(
-                      //     margin: const EdgeInsets.only(top: 12),
-                      //     padding: const EdgeInsets.all(12),
-                      //     decoration: BoxDecoration(
-                      //         color: Theme.of(context)
-                      //             .colorScheme
-                      //             .primary
-                      //             .withOpacity(0.7),
-                      //         borderRadius: BorderRadius.circular(12)),
-                      //     child: Text(
-                      //       AppLocalizations.of(context)!.deviceId_warning,
-                      //       style: NormalTextStyle(
-                      //           color: Theme.of(context).colorScheme.onPrimary),
-                      //     ),
-                      //   ),
-                      // ),
+                      Visibility(
+                        // visible: activeDevice != deviceId,
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 12),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Text(
+                            AppLocalizations.of(context)!.deviceId_warning,
+                            style: NormalTextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary),
+                          ),
+                        ),
+                      ),
                       ValueListenableBuilder(
                         valueListenable: controller.today,
                         builder: (context, value, child) {
@@ -231,54 +231,6 @@ class HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          // ValueListenableBuilder(
-          //     valueListenable: controller.data,
-          //     builder: (context, value, child) {
-          //       String activeDevice = value?.activeDeviceId ?? "";
-          //       return Positioned(
-          //         left: 16,
-          //         right: 16,
-          //         bottom: 8,
-          //         height: 64,
-          //         child: Visibility(
-          //           visible: deviceId == activeDevice,
-          //           child: Container(
-          //             alignment: Alignment.center,
-          //             child: ClipRRect(
-          //               borderRadius: BorderRadius.circular(28),
-          //               child: Material(
-          //                 color: Colors.transparent,
-          //                 borderRadius: BorderRadius.circular(28),
-          //                 child: Ink(
-          //                   color: Theme.of(context)
-          //                       .colorScheme
-          //                       .primary
-          //                       .withOpacity(0.7),
-          //                   child: InkWell(
-          //                     borderRadius: BorderRadius.circular(28),
-          //                     onTap: () {
-          //                       checkIn();
-          //                     },
-          //                     splashColor:
-          //                         Theme.of(context).colorScheme.primary,
-          //                     child: Container(
-          //                       padding: const EdgeInsets.all(8),
-          //                       height: 64,
-          //                       width: 64,
-          //                       child: Image.asset(
-          //                         "assets/images/fingerprint.png",
-          //                         color:
-          //                             Theme.of(context).colorScheme.onPrimary,
-          //                       ),
-          //                     ),
-          //                   ),
-          //                 ),
-          //               ),
-          //             ),
-          //           ),
-          //         ),
-          //       );
-          //     }),
         ],
       ),
     );
@@ -300,10 +252,6 @@ class HomePageState extends State<HomePage> {
     Navigator.of(context).push(SidePageRoute(const FormPage()));
   }
 
-  // navigateToSetting() {
-  //   Navigator.of(context).push(SidePageRoute(const SettingPage()));
-  // }
-
   @override
   void initState() {
     // TODO: implement initState
@@ -311,20 +259,4 @@ class HomePageState extends State<HomePage> {
     controller.getProfile();
   }
 
-  //   checkIn() async {
-  //   var profile = await controller.getProfile();
-  //   if (profile == null) {
-  //     return;
-  //   }
-  //   var deviceId = await controller.deviceId();
-  //   if (deviceId != profile.activeDeviceId) {
-  //     return;
-  //   }
-
-  //   var hasCheckin = await hasCheckedIn();
-  //   if (hasCheckin == false) {
-  //     return await forceCheckIn();
-  //   }
-  //   await forceCheckOut();
-  // }
 }

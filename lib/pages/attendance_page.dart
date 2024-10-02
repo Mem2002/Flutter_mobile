@@ -21,8 +21,6 @@ final getIt = GetIt.instance;
 
 class AttendancePageState extends State<AttendancePage> {
   final AttendanceControllers controller = GetIt.I<AttendanceControllers>();
-  // final AttendanceControllers controller =
-  //     GetIt.instance.get<AttendanceControllers>();
   DateTime currentTime = DateTime.now();
 
   @override
@@ -36,13 +34,6 @@ class AttendancePageState extends State<AttendancePage> {
     return Scaffold(
       body: Stack(
         children: [
-          // Positioned(
-          //   left: 0,
-          //   right: 0,
-          //   top: 0,
-          //   height: MediaQuery.of(context).size.height / 2 + 24,
-          //   child: const ThemeBackground(),
-          // ),
           CustomScrollView(
             slivers: [
               SliverAppBar(
@@ -133,9 +124,61 @@ class AttendancePageState extends State<AttendancePage> {
                   },
                 ),
               ),
-              const SliverToBoxAdapter(
-                child: SizedBox(
-                  height: 24,
+              SliverToBoxAdapter(
+                child: ValueListenableBuilder<List<DateTime>>(
+                  valueListenable: controller.absentDays,
+                  builder: (context, absentDays, child) {
+                    int totalAbsentDays =
+                        absentDays.length; // Tính tổng số ngày vắng mặt
+
+                    return Container(
+                      padding: const EdgeInsets.all(16), // Thêm padding cho đẹp
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 12), // Thêm margin
+                      decoration: BoxDecoration(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.1), // Màu nền
+                        borderRadius: BorderRadius.circular(12), // Bo góc
+                        border: Border.all(
+                            color:
+                                Theme.of(context).colorScheme.primary), // Viền
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment
+                            .start, // Căn trái cho văn bản trên
+                        children: [
+                          Text(
+                            "Total number of days not yet clocked in:",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary, // Màu chữ
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment:
+                                MainAxisAlignment.center, // Căn giữa
+                            children: [
+                              Text(
+                                "$totalAbsentDays",
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondary, // Màu chữ lớn
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
@@ -207,7 +250,6 @@ class AttendancePageState extends State<AttendancePage> {
     var lastMonth = DateTime(currentTime.year, currentTime.month + 1);
     var formatter = DateFormat("yyyy-MM-dd");
     controller.getAttendance(formatter.format(firstMonth),
-        formatter.format(lastMonth) // Truyền accessToken vào
-        );
+        formatter.format(lastMonth)); // Truyền accessToken vào
   }
 }
