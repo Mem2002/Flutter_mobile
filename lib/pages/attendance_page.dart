@@ -36,13 +36,13 @@ class AttendancePageState extends State<AttendancePage> {
     return Scaffold(
       body: Stack(
         children: [
-          Positioned(
-            left: 0,
-            right: 0,
-            top: 0,
-            height: MediaQuery.of(context).size.height / 2 + 24,
-            child: const ThemeBackground(),
-          ),
+          // Positioned(
+          //   left: 0,
+          //   right: 0,
+          //   top: 0,
+          //   height: MediaQuery.of(context).size.height / 2 + 24,
+          //   child: const ThemeBackground(),
+          // ),
           CustomScrollView(
             slivers: [
               SliverAppBar(
@@ -76,44 +76,44 @@ class AttendancePageState extends State<AttendancePage> {
               ),
               SliverToBoxAdapter(
                 child: ValueListenableBuilder<List<AttendanceResponses>>(
-                  valueListenable: controller.data,
-                  builder: (context, value, child) {
-                    return CalendarWidget(
-                      startDay: currentTime,
-                      data: value,
-                      onpress: (p0) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            var dateFormat = DateFormat("HH:mm dd/MM/yyyy");
-                            return Dialog(
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: 80,
-                                width: 240,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Giờ vào: ${dateFormat.format(p0.checkIn.toLocal())}",
-                                    ),
-                                    Visibility(
-                                      visible: p0.checkOut != null,
-                                      child: Text(
-                                        "Giờ ra: ${dateFormat.format(p0.checkOut!.toLocal())}",
+                    valueListenable: controller.data,
+                    builder: (context, value, child) {
+                      return CalendarWidget(
+                        startDay: currentTime,
+                        data: value,
+                        onpress: (p0) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              var dateFormat = DateFormat("HH:mm dd/MM/yyyy");
+                              return Dialog(
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  height: 80,
+                                  width: 240,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Giờ vào: ${p0.checkIn != null ? dateFormat.format(p0.checkIn!.toLocal()) : 'Not yet'}",
                                       ),
-                                    ),
-                                  ],
+                                      Visibility(
+                                        visible: p0.checkOut != null,
+                                        child: Text(
+                                          "Giờ ra: ${p0.checkOut != null ? dateFormat.format(p0.checkOut!.toLocal()) : 'Not yet'}",
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    );
-                  },
-                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    }),
               ),
               SliverToBoxAdapter(
                 child: ValueListenableBuilder<AttendanceResponses?>(
