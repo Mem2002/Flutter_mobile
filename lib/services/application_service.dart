@@ -1,5 +1,6 @@
 import 'package:flutter_app/apis/attendances/dtos/attendance_report_response.dart';
 import 'package:flutter_app/apis/profiles/dtos/profile_dto.dart';
+import 'package:flutter_app/models/attendance_model.dart';
 // import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
@@ -17,7 +18,7 @@ abstract class IApplicationService {
   Future<CheckOutResponse?> checkOut(DateTime date);
   Future<CheckOutResponse?> forceCheckOut();
   Future<ReportDto?> getReport(String from, String to);
-  Future<AttendanceResponse?> getAttendance(String from, String to);
+  // Future<AttendanceResponses?> getAttendance(String from, String to);
   Future<PayslipResponse?> getPayslip(int month, int year);
   Future<ProfileDto?> getProfile();
   Future<String> getCurrentDeviceIdAsync();
@@ -38,9 +39,9 @@ class ApplicationService extends IApplicationService {
   ApplicationService(
       this.attendanceApi, this.payslipApi, this.profileApi, this.cacheService);
   @override
-  Future<AttendanceResponse?> getAttendance(String from, String to) {
-    return attendanceApi.getAttendance(from, to);
-  }
+  // Future<AttendanceResponses?> getAttendance(String from, String to) {
+  //   return attendanceApi.getAttendance(from, to);
+  // }
 
   @override
   Future<PayslipResponse?> getPayslip(int month, int year) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/controllers/attendance_controller_2.dart';
 import 'package:flutter_app/injection.dart';
 import 'package:flutter_app/pages/home_page.dart';
 import '../styles/themes.dart';
@@ -28,6 +29,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'injection.dart';
+final GetIt getIt = GetIt.instance;
+
 NotificationDetails notificationDetails({String title = "Checkin"}) =>
     NotificationDetails(
       android: AndroidNotificationDetails(
@@ -48,20 +51,22 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-checkPermission() async {
-  if (await Permission.location.isGranted) {
-    // Either the permission was already granted before or the user just granted it.
-  }
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.requestNotificationsPermission();
-  await [
-    Permission.location,
-    Permission.notification,
-    Permission.backgroundRefresh
-  ].request();
-}
+
+
+// checkPermission() async {
+//   if (await Permission.location.isGranted) {
+//     // Either the permission was already granted before or the user just granted it.
+//   }
+//   await flutterLocalNotificationsPlugin
+//       .resolvePlatformSpecificImplementation<
+//           AndroidFlutterLocalNotificationsPlugin>()
+//       ?.requestNotificationsPermission();
+//   await [
+//     Permission.location,
+//     Permission.notification,
+//     Permission.backgroundRefresh
+//   ].request();
+// }
 
 final service = FlutterBackgroundService();
 Future<void> initializeService() async {

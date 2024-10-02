@@ -12,16 +12,16 @@ import 'dtos/checkin_response.dart';
 class AttendanceApi {
   IHttpBase http;
   AttendanceApi(this.http);
-  Future<AttendanceResponse?> getAttendance(String from, String to) async {
-    try {
-      var res = await http.get('/employee/attendances/by-month',
-          queryParameters: {"start_date": from, "end_date": to}, auth: true);
-      var body = attendanceResponseFromJson(res.body);
-      return body;
-    } catch (e) {
-      return null;
-    }
-  }
+  // Future<AttendanceResponse?> getAttendance(String from, String to) async {
+  //   try {
+  //     var res = await http.get('/employee/attendances/by-month',
+  //         queryParameters: {"start_date": from, "end_date": to}, auth: true);
+  //     var body = attendanceResponseFromJson(res.body);
+  //     return body;
+  //   } catch (e) {
+  //     return null;
+  //   }
+  // }
 
   Future<AttendanceReportDto?> reportAttendance(String from, String to) async {
     try {

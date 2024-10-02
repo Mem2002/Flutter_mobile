@@ -1,7 +1,8 @@
-import 'package:flutter_app/controllers/attendance_controller.dart';
+import 'package:flutter_app/controllers/attendance_controller_2.dart';
+import 'package:flutter_app/models/attendance_model.dart';
 import 'package:flutter_app/styles/text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart'; //get it này để làm gì
+import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_app/widgets/theme_background.dart';
 import 'package:mat_month_picker_dialog/mat_month_picker_dialog.dart';
@@ -16,15 +17,18 @@ class AttendancePage extends StatefulWidget {
   State<StatefulWidget> createState() => AttendancePageState();
 }
 
+final getIt = GetIt.instance;
+
 class AttendancePageState extends State<AttendancePage> {
-  final AttendanceController controller =
-      GetIt.instance.get<AttendanceController>();
+  final AttendanceControllers controller = GetIt.I<AttendanceControllers>();
+  // final AttendanceControllers controller =
+  //     GetIt.instance.get<AttendanceControllers>();
   DateTime currentTime = DateTime.now();
+
   @override
   void initState() {
     super.initState();
     loadData();
-    controller.loadToday();
   }
 
   @override
@@ -71,12 +75,12 @@ class AttendancePageState extends State<AttendancePage> {
                 ),
               ),
               SliverToBoxAdapter(
-                child: ValueListenableBuilder(
+                child: ValueListenableBuilder<List<AttendanceResponses>>(
                   valueListenable: controller.data,
                   builder: (context, value, child) {
                     return CalendarWidget(
                       startDay: currentTime,
-                      data: value ?? [],
+                      data: value,
                       onpress: (p0) {
                         showDialog(
                           context: context,
@@ -92,11 +96,14 @@ class AttendancePageState extends State<AttendancePage> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Text(
-                                        "Giờ vào : ${dateFormat.format(p0.inTime.toLocal())}"),
+                                      "Giờ vào: ${dateFormat.format(p0.checkIn.toLocal())}",
+                                    ),
                                     Visibility(
-                                        visible: p0.outTime != null,
-                                        child: Text(
-                                            "Giờ ra : ${dateFormat.format((p0.outTime ?? DateTime.now()).toLocal())}")),
+                                      visible: p0.checkOut != null,
+                                      child: Text(
+                                        "Giờ ra: ${dateFormat.format(p0.checkOut!.toLocal())}",
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -109,18 +116,20 @@ class AttendancePageState extends State<AttendancePage> {
                 ),
               ),
               SliverToBoxAdapter(
-                child: ValueListenableBuilder(
+                child: ValueListenableBuilder<AttendanceResponses?>(
                   valueListenable: controller.today,
                   builder: (context, value, child) {
                     if (value == null) {
-                      return Container();
+                      return Container(); // Trả về Container khi không có dữ liệu
                     }
-                    var timeFormater = DateFormat("HH:mm");
+                    var timeFormatter = DateFormat("HH:mm");
                     return itemDisplay(
-                        "Hôm nay", timeFormater.format(value.inTime.toLocal()),
-                        outTime: value.outTime == null
-                            ? null
-                            : timeFormater.format(value.outTime!.toLocal()));
+                      "Hôm nay",
+                      timeFormatter.format(value.checkIn.toLocal()),
+                      outTime: value.checkOut == null
+                          ? null
+                          : timeFormatter.format(value.checkOut!.toLocal()),
+                    );
                   },
                 ),
               ),
@@ -142,46 +151,50 @@ class AttendancePageState extends State<AttendancePage> {
       padding: const EdgeInsets.only(left: 24, right: 24, top: 12, bottom: 12),
       margin: const EdgeInsets.only(left: 24, right: 24, top: 24),
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.background,
-          boxShadow: [
-            BoxShadow(
-                color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
-                offset: const Offset(6, 6),
-                blurRadius: 12,
-                blurStyle: BlurStyle.normal)
-          ],
-          borderRadius: BorderRadius.circular(16)),
+        color: Theme.of(context).colorScheme.background,
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.shadow.withOpacity(0.15),
+            offset: const Offset(6, 6),
+            blurRadius: 12,
+            blurStyle: BlurStyle.normal,
+          ),
+        ],
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const NormalTextStyle(),
-            ),
-            Text(
-              "Check-in: $inTime",
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const NormalTextStyle(),
+          ),
+          Text(
+            "Check-in: $inTime",
+            style: NormalBoldTextStyle(
+                color: Theme.of(context).colorScheme.primary),
+          ),
+          Visibility(
+            visible: outTime != null,
+            child: Text(
+              "Check-out: ${outTime ?? ""}",
               style: NormalBoldTextStyle(
                   color: Theme.of(context).colorScheme.primary),
             ),
-            Visibility(
-              visible: outTime != null,
-              child: Text(
-                "Check-out: ${outTime ?? ""}",
-                style: NormalBoldTextStyle(
-                    color: Theme.of(context).colorScheme.primary),
-              ),
-            )
-          ]),
+          ),
+        ],
+      ),
     );
   }
 
   selectMonth() async {
     var selected = await showMonthPicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(1970),
-        lastDate: DateTime(2050));
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1970),
+      lastDate: DateTime(2050),
+    );
 
     setState(() {
       currentTime = selected ?? currentTime;
@@ -192,8 +205,9 @@ class AttendancePageState extends State<AttendancePage> {
   loadData() {
     var firstMonth = DateTime(currentTime.year, currentTime.month);
     var lastMonth = DateTime(currentTime.year, currentTime.month + 1);
-    var formater = DateFormat("yyyy-MM-dd");
-    controller.getAttendance(
-        formater.format(firstMonth), formater.format(lastMonth));
+    var formatter = DateFormat("yyyy-MM-dd");
+    controller.getAttendance(formatter.format(firstMonth),
+        formatter.format(lastMonth) // Truyền accessToken vào
+        );
   }
 }

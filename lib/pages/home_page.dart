@@ -106,64 +106,64 @@ class HomePageState extends State<HomePage> {
                           )),
                         ],
                       ),
-                      Visibility(
-                        // visible: activeDevice != deviceId,
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 12),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withOpacity(0.7),
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Text(
-                            AppLocalizations.of(context)!.deviceId_warning,
-                            style: NormalTextStyle(
-                                color: Theme.of(context).colorScheme.onPrimary),
-                          ),
-                        ),
-                      ),
-                      // ValueListenableBuilder(
-                      //   valueListenable: controller.today,
-                      //   builder: (context, value, child) {
-                      //     var timeFormater = DateFormat("HH:mm");
-                      //     if (value == null) {
-                      //       return Container();
-                      //     }
-                      //     return Container(
-                      //       margin: const EdgeInsets.only(top: 12),
-                      //       padding: const EdgeInsets.all(12),
-                      //       decoration: BoxDecoration(
-                      //           color: Theme.of(context)
-                      //               .colorScheme
-                      //               .background
-                      //               .withOpacity(0.7),
-                      //           borderRadius: BorderRadius.circular(12)),
-                      //       child: Row(children: [
-                      //         Container(
-                      //           margin: const EdgeInsets.only(right: 12),
-                      //           height: 40,
-                      //           width: 40,
-                      //           child:
-                      //               Image.asset("assets/images/ic_success.png"),
-                      //         ),
-                      //         Column(
-                      //           crossAxisAlignment: CrossAxisAlignment.start,
-                      //           children: [
-                      //             Text(
-                      //                 "Hôm nay đã check-in: ${timeFormater.format(value.inTime)}"),
-                      //             Visibility(
-                      //               visible: value.outTime != null,
-                      //               child: Text(
-                      //                   "check-out: ${timeFormater.format((value.outTime ?? DateTime.now()))}"),
-                      //             ),
-                      //           ],
-                      //         )
-                      //       ]),
-                      //     );
-                      //   },
-                      // )
+                      // Visibility(
+                      //   // visible: activeDevice != deviceId,
+                      //   child: Container(
+                      //     margin: const EdgeInsets.only(top: 12),
+                      //     padding: const EdgeInsets.all(12),
+                      //     decoration: BoxDecoration(
+                      //         color: Theme.of(context)
+                      //             .colorScheme
+                      //             .primary
+                      //             .withOpacity(0.7),
+                      //         borderRadius: BorderRadius.circular(12)),
+                      //     child: Text(
+                      //       AppLocalizations.of(context)!.deviceId_warning,
+                      //       style: NormalTextStyle(
+                      //           color: Theme.of(context).colorScheme.onPrimary),
+                      //     ),
+                      //   ),
+                      // ),
+                      ValueListenableBuilder(
+                        valueListenable: controller.today,
+                        builder: (context, value, child) {
+                          var timeFormater = DateFormat("HH:mm");
+                          if (value == null) {
+                            return Container();
+                          }
+                          return Container(
+                            margin: const EdgeInsets.only(top: 12),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .background
+                                    .withOpacity(0.7),
+                                borderRadius: BorderRadius.circular(12)),
+                            child: Row(children: [
+                              Container(
+                                margin: const EdgeInsets.only(right: 12),
+                                height: 40,
+                                width: 40,
+                                child:
+                                    Image.asset("assets/images/ic_success.png"),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      "Hôm nay đã check-in: ${timeFormater.format(value.checkIn)}"),
+                                  Visibility(
+                                    visible: value.checkOut != null,
+                                    child: Text(
+                                        "check-out: ${timeFormater.format((value.checkOut ?? DateTime.now()))}"),
+                                  ),
+                                ],
+                              )
+                            ]),
+                          );
+                        },
+                      )
                     ],
                   );
                 },

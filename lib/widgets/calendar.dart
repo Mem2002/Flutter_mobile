@@ -1,4 +1,5 @@
 import 'package:flutter_app/extensions/date_extensions.dart';
+import 'package:flutter_app/models/attendance_model.dart';
 import 'package:flutter_app/styles/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -7,9 +8,9 @@ import '../apis/attendances/dtos/attendance_response.dart';
 
 // ignore: must_be_immutable
 class CalendarWidget extends StatefulWidget {
-  List<AttendanceData> data;
+  List<AttendanceResponses> data;
   DateTime startDay;
-  Function(AttendanceData) onpress;
+  Function(AttendanceResponses) onpress;
 
   CalendarWidget(
       {super.key,
@@ -147,45 +148,45 @@ class CalendarWidgetState extends State<CalendarWidget> {
     );
   }
 
-  Color timeToColor(AttendanceData? data) {
+  Color timeToColor(AttendanceResponses? data) {
     if (data == null) {
       return Colors.transparent;
     }
-    if ((data.inTime
+    if ((data.checkIn
                     .toLocal()
                     .add(-const Duration(hours: 8, minutes: 45))
                     .difference(data.date)
                     .isNegative ==
                 true ||
-            (data.inTime
+            (data.checkIn
                         .toLocal()
                         .add(-const Duration(hours: 12, minutes: 00))
                         .difference(data.date)
                         .isNegative ==
                     false &&
-                data.inTime
+                data.checkIn
                         .toLocal()
                         .add(-const Duration(hours: 13, minutes: 45))
                         .difference(data.date)
                         .isNegative ==
                     true)) &&
-        data.outTime != null) {
+        data.checkOut != null) {
       return Colors.green;
     }
 
-    if ((data.inTime
+    if ((data.checkIn
                     .toLocal()
                     .add(-const Duration(hours: 8, minutes: 45))
                     .difference(data.date)
                     .isNegative ==
                 false &&
-            data.inTime
+            data.checkIn
                     .toLocal()
                     .add(-const Duration(hours: 12))
                     .difference(data.date)
                     .isNegative ==
                 true) ||
-        data.inTime
+        data.checkIn
                 .toLocal()
                 .add(-const Duration(hours: 13, minutes: 45))
                 .difference(data.date)

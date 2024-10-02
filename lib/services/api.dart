@@ -1,11 +1,42 @@
 import 'dart:convert';
+import 'package:flutter_app/apis/attendances/dtos/attendance_response.dart';
 import 'package:flutter_app/apis/authentications/dtos/login_response.dart';
+import 'package:flutter_app/models/attendance_model.dart';
 import 'package:flutter_app/models/payslip_model.dart'; // Đổi tên file model cho phù hợp
 import 'package:flutter_app/utils/constants.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Api {
+  final getIt = GetIt.instance;
+  static Future<List<AttendanceResponses>> getAttendance(
+      String accessToken, String startDate, String endDate) async {
+    final Uri uri =
+        Uri.parse('${Constants.baseUrl}attendance').replace(queryParameters: {
+      'startDate': startDate,
+      'endDate': endDate,
+    });
+
+    final response = await http.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonResponse = jsonDecode(response.body);
+      return jsonResponse
+          .map((json) => AttendanceResponses.fromJson(json))
+          .toList();
+    } else {
+      print('Error: ${response.statusCode} - ${response.body}');
+      throw Exception('Unable to load attendance data');
+    }
+  }
+
   static Future<List<Payslip>> getPayslip(String accessToken) async {
     final response =
         await http.get(Uri.parse('${Constants.baseUrl}payslip'), headers: {
@@ -115,5 +146,17 @@ class Api {
     } else {
       throw Exception('No access token found.');
     }
+  }
+
+  // Lưu access token vào SharedPreferences
+  static Future<void> saveAccessToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('accessToken', token);
+  }
+
+  // Lấy access token từ SharedPreferences
+  static Future<String?> getAccessToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('accessToken');
   }
 }
