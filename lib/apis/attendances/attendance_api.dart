@@ -34,18 +34,18 @@ class AttendanceApi {
     }
   }
 
-  Future<CheckInResponse?> checkIn(String deviceId) async {
-    try {
-      var res = await http.post(
-          '/employee/attendances/checkin', {"device_id": deviceId},
-          auth: true);
-      var body = checkInResponseFromJson(res.body);
+  // Future<CheckInResponse?> checkIn(String deviceId) async {
+  //   try {
+  //     var res = await http.post(
+  //         '/employee/attendances/checkin', {"device_id": deviceId},
+  //         auth: true);
+  //     var body = checkInResponseFromJson(res.body);
 
-      return body;
-    } catch (e) {
-      return null;
-    }
-  }
+  //     return body;
+  //   } catch (e) {
+  //     return null;
+  //   }
+  // }
 
   Future<ResponseEmpty?> checkoutable() async {
     try {
@@ -58,27 +58,27 @@ class AttendanceApi {
     }
   }
 
-  Future<CheckOutResponse?> checkOut(String deviceId, DateTime date) async {
-    try {
-      var res = await http.post('/employee/attendances/checkout',
-          {"device_id": deviceId, "date": date.toIso8601String()},
-          auth: true);
-      var body = checkOutResponseFromJson(res.body);
-      return body;
-    } catch (e) {
-      return null;
-    }
-  }
+  // Future<CheckOutResponse?> checkOut(String deviceId, DateTime date) async {
+  //   try {
+  //     var res = await http.post('/employee/attendances/checkout',
+  //         {"device_id": deviceId, "date": date.toIso8601String()},
+  //         auth: true);
+  //     var body = checkOutResponseFromJson(res.body);
+  //     return body;
+  //   } catch (e) {
+  //     return null;
+  //   }
+  // }
 
-  Future<CheckOutResponse?> forceCheckOut(String deviceId) async {
-    try {
-      var res = await http.post(
-          '/employee/attendances/force-checkout', {"device_id": deviceId},
-          auth: true);
-      var body = checkOutResponseFromJson(res.body);
-      return body;
-    } catch (e) {
-      return null;
-    }
-  }
+  // Future<CheckOutResponse?> forceCheckOut(String deviceId) async {
+  //   try {
+  //     var res = await http.post(
+  //         '/employee/attendances/force-checkout', {"device_id": deviceId},
+  //         auth: true);
+  //     var body = checkOutResponseFromJson(res.body);
+  //     return body;
+  //   } catch (e) {
+  //     return null;
+  //   }
+  // }
 }

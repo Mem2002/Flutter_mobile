@@ -14,9 +14,9 @@ import '../apis/profiles/profile_api.dart';
 import 'cache_service.dart';
 
 abstract class IApplicationService {
-  Future<CheckInResponse?> checkIn();
-  Future<CheckOutResponse?> checkOut(DateTime date);
-  Future<CheckOutResponse?> forceCheckOut();
+  // Future<CheckInResponse?> checkIn();
+  // Future<CheckOutResponse?> checkOut(DateTime date);
+  // Future<CheckOutResponse?> forceCheckOut();
   Future<ReportDto?> getReport(String from, String to);
   // Future<AttendanceResponses?> getAttendance(String from, String to);
   Future<PayslipResponse?> getPayslip(int month, int year);
@@ -60,25 +60,25 @@ class ApplicationService extends IApplicationService {
     return res?.data;
   }
 
-  @override
-  Future<CheckInResponse?> checkIn() async {
-    var deviceId = await getCurrentDeviceIdAsync();
-    var profile = await getProfile();
-    if (deviceId != (profile?.activeDeviceId ?? "")) {
-      return null;
-    }
-    return await attendanceApi.checkIn(deviceId);
-  }
+  // @override
+  // Future<CheckInResponse?> checkIn() async {
+  //   var deviceId = await getCurrentDeviceIdAsync();
+  //   var profile = await getProfile();
+  //   if (deviceId != (profile?.activeDeviceId ?? "")) {
+  //     return null;
+  //   }
+  //   return await attendanceApi.checkIn(deviceId);
+  // }
 
-  @override
-  Future<CheckOutResponse?> checkOut(DateTime date) async {
-    var deviceId = await getCurrentDeviceIdAsync();
-    var profile = await getProfile();
-    if (deviceId != (profile?.activeDeviceId ?? "")) {
-      return null;
-    }
-    return await attendanceApi.checkOut(deviceId, date);
-  }
+  // @override
+  // Future<CheckOutResponse?> checkOut(DateTime date) async {
+  //   var deviceId = await getCurrentDeviceIdAsync();
+  //   var profile = await getProfile();
+  //   if (deviceId != (profile?.activeDeviceId ?? "")) {
+  //     return null;
+  //   }
+  //   return await attendanceApi.checkOut(deviceId, date);
+  // }
 
   @override
   Future<String> getCurrentDeviceIdAsync() async {
@@ -144,15 +144,15 @@ class ApplicationService extends IApplicationService {
         .setAsync("Checkoutable", {"checkout": checkoutable?.error == false});
   }
 
-  @override
-  Future<CheckOutResponse?> forceCheckOut() async {
-    var deviceId = await getCurrentDeviceIdAsync();
-    var profile = await getProfile();
-    if (deviceId != (profile?.activeDeviceId ?? "")) {
-      return null;
-    }
-    return await attendanceApi.forceCheckOut(deviceId);
-  }
+  // @override
+  // Future<CheckOutResponse?> forceCheckOut() async {
+  //   var deviceId = await getCurrentDeviceIdAsync();
+  //   var profile = await getProfile();
+  //   if (deviceId != (profile?.activeDeviceId ?? "")) {
+  //     return null;
+  //   }
+  //   return await attendanceApi.forceCheckOut(deviceId);
+  // }
 }
 
 class DeviceId {

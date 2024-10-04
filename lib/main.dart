@@ -175,16 +175,16 @@ checkIn() async {
   final key = "checkin${DateFormat("ddMMyyyy").format(DateTime.now())}";
 
   var service = getIt.get<IApplicationService>();
-  var checkedIn = await service.checkIn();
+  // var checkedIn = await service.checkIn();
 
-  if ((checkedIn?.data.id ?? 0) > 0) {
-    preferences.setDouble(key, DateTime.now().millisecondsSinceEpoch * 1.0);
-    flutterLocalNotificationsPlugin.show(
-        DateTime.now().second,
-        "Checkin thành công",
-        "Bạn đã Checkin thành công lúc ${DateFormat("HH:mm dd/MM/yyyy").format(DateTime.now())}",
-        notificationDetails(title: "Checkin"));
-  }
+  // if ((checkedIn?.data.id ?? 0) > 0) {
+  //   preferences.setDouble(key, DateTime.now().millisecondsSinceEpoch * 1.0);
+  //   flutterLocalNotificationsPlugin.show(
+  //       DateTime.now().second,
+  //       "Checkin thành công",
+  //       "Bạn đã Checkin thành công lúc ${DateFormat("HH:mm dd/MM/yyyy").format(DateTime.now())}",
+  //       notificationDetails(title: "Checkin"));
+  // }
   // flutterLocalNotificationsPlugin.show(1, "title", "body", notificationDetails);
 }
 
@@ -202,26 +202,26 @@ checkOut() async {
     return;
   }
 
-  var res = await service.checkOut(checkoutTime);
-  const NotificationDetails notificationDetails = NotificationDetails(
-    android: AndroidNotificationDetails(
-      "CheckOut",
-      "CheckOut",
-      priority: Priority.max,
-      importance: Importance.max,
-      enableVibration: true,
-    ),
-  );
-  if (res == null || res.data == null) {
-    return;
-  }
+  // var res = await service.checkOut(checkoutTime);
+  // const NotificationDetails notificationDetails = NotificationDetails(
+  //   android: AndroidNotificationDetails(
+  //     "CheckOut",
+  //     "CheckOut",
+  //     priority: Priority.max,
+  //     importance: Importance.max,
+  //     enableVibration: true,
+  //   ),
+  // );
+  // if (res == null || res.data == null) {
+  //   return;
+  // }
 
-  flutterLocalNotificationsPlugin.show(
-      DateTime.now().second,
-      "Checkout thành công",
-      "Bạn đã checkout thành công lúc ${DateFormat("HH:mm dd/MM/yyyy").format(checkoutTime)}",
-      notificationDetails);
-  await service.setCheckoutTime(null);
+  // flutterLocalNotificationsPlugin.show(
+  //     DateTime.now().second,
+  //     "Checkout thành công",
+  //     "Bạn đã checkout thành công lúc ${DateFormat("HH:mm dd/MM/yyyy").format(checkoutTime)}",
+  //     notificationDetails);
+  // await service.setCheckoutTime(null);
 }
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =

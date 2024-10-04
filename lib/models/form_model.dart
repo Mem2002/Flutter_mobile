@@ -48,6 +48,10 @@ enum ShiftOff { morning, afternoon, night }
 
 enum WorkingHour { morningAfternoon, afternoonNight }
 
+//Trong Flutter (và Dart), enum là một kiểu dữ liệu đặc biệt cho phép bạn định 
+//nghĩa một tập hợp các giá trị hằng số có tên. enum giúp mã nguồn trở nên dễ đọc 
+//và bảo trì hơn bằng cách thay thế các giá trị số hoặc chuỗi không có ý nghĩa bằng các tên có ý nghĩa.
+
 class AttendanceTimeModel {
   AttendanceType type;
   DateTime time;

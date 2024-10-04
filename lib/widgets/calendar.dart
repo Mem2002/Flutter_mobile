@@ -61,7 +61,7 @@ class CalendarWidgetState extends State<CalendarWidget> {
                   height: 32,
                   width: 32,
                   child: Text(
-                    i.toDayOfWeek(context),
+                    i.toDayOfWeek(context), //gọi từ t2 -> t7 ở file date_extensions.dart
                   ),
                 )),
             ],
