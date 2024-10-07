@@ -155,26 +155,26 @@ class OverTimeFormState extends State<OverTimeFormView> {
                     AppLocalizations.of(context)!.form_enter_result_overtime),
           ),
         ),
-        Container(
-          margin: const EdgeInsets.only(left: 24, right: 24, top: 16),
-          child: Text(AppLocalizations.of(context)!.form_result_overtime),
-        ),
-        ContainerBorder(
-          margin:
-              const EdgeInsets.only(left: 24, right: 24, top: 12, bottom: 12),
-          padding:
-              const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 12),
-          child: TextField(
-            minLines: 2,
-            controller: resultController,
-            keyboardType: TextInputType.multiline,
-            maxLines: null,
-            style: const SmallNormalTextStyle(),
-            decoration: InputDecoration(
-                hintText:
-                    AppLocalizations.of(context)!.form_enter_result_overtime),
-          ),
-        ),
+        // Container(
+        //   margin: const EdgeInsets.only(left: 24, right: 24, top: 16),
+        //   child: Text(AppLocalizations.of(context)!.form_result_overtime),
+        // ),
+        // ContainerBorder(
+        //   margin:
+        //       const EdgeInsets.only(left: 24, right: 24, top: 12, bottom: 12),
+        //   padding:
+        //       const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 12),
+        //   child: TextField(
+        //     minLines: 2,
+        //     controller: resultController,
+        //     keyboardType: TextInputType.multiline,
+        //     maxLines: null,
+        //     style: const SmallNormalTextStyle(),
+        //     decoration: InputDecoration(
+        //         hintText:
+        //             AppLocalizations.of(context)!.form_enter_result_overtime),
+        //   ),
+        // ),
         Container(
           height: 48,
           margin: const EdgeInsets.only(left: 24, right: 24, top: 16),

@@ -47,7 +47,7 @@ dependencies:
   webview_flutter: ^4.4.2
   network_info_plus: ^5.0.3
   package_info_plus: ^6.0.0
-  connectivity_plus: ^6.0.1
+  connectivity_plus: ^6.0.5
   shared_preferences: ^2.2.2
   mobile_scanner: ^5.2.3
   qr_scanner_overlay: ^0.0.2

@@ -1,15 +1,357 @@
 import 'dart:convert';
 import 'package:flutter_app/apis/attendances/dtos/attendance_response.dart';
 import 'package:flutter_app/apis/authentications/dtos/login_response.dart';
+import 'package:flutter_app/apis/proposes/dtos/get_proposes_dto.dart';
+import 'package:flutter_app/apis/response_base.dart';
 import 'package:flutter_app/models/attendance_model.dart';
+import 'package:flutter_app/models/form_model.dart';
 import 'package:flutter_app/models/payslip_model.dart'; // Đổi tên file model cho phù hợp
 import 'package:flutter_app/utils/constants.dart';
-import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+import 'package:injectable/injectable.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+//Getit phải có injectable
+@injectable
 class Api {
-  final getIt = GetIt.instance;
+  static Future<ProposeDataResponse?> getProposes(
+      {DateTime? from, DateTime? to, int page = 1}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedToken = prefs.getString('accessToken');
+
+    if (storedToken == null) {
+      throw Exception('No access token found.');
+    }
+
+    final url = Uri.parse('${Constants.baseUrl}employee/proposes');
+
+    try {
+      final DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
+      final response = await http.get(
+        url.replace(queryParameters: {
+          "page": page.toString(),
+          "date_range[]": (from != null && to != null)
+              ? [dateFormat.format(from), dateFormat.format(to)]
+              : null,
+        }),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $storedToken', // Thêm token vào header
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return ProposeDataResponse.fromJson(jsonDecode(response.body));
+      } else {
+        // Xử lý lỗi nếu cần
+        print('Error: ${response.statusCode} - ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Lỗi khi gửi yêu cầu: $e');
+      return null;
+    }
+  }
+
+  static Future<ProposeDataResponse?> getPropose(int id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedToken = prefs.getString('accessToken');
+
+    if (storedToken == null) {
+      throw Exception('No access token found.');
+    }
+
+    final url = Uri.parse('${Constants.baseUrl}employee/propose/$id');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $storedToken', // Thêm token vào header
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return ProposeDataResponse.fromJson(jsonDecode(response.body));
+      } else {
+        // Xử lý lỗi nếu cần
+        print('Error: ${response.statusCode} - ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Lỗi khi gửi yêu cầu: $e');
+      return null;
+    }
+  }
+
+  static Future<ResponseEmpty?> deletePropose(int id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedToken = prefs.getString('accessToken');
+
+    if (storedToken == null) {
+      throw Exception('No access token found.');
+    }
+
+    final url = Uri.parse('${Constants.baseUrl}employee/propose/$id');
+
+    try {
+      final response = await http.delete(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $storedToken', // Thêm token vào header
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return ResponseEmpty.fromJson(jsonDecode(response.body));
+      } else {
+        // Xử lý lỗi nếu cần
+        print('Error: ${response.statusCode} - ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Lỗi khi gửi yêu cầu: $e');
+      return null;
+    }
+  }
+
+  static Future<ResponseEmpty?> createAddTimePropose(
+    DateTime date,
+    String checkIn,
+    String checkOut,
+    String reason,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedToken = prefs.getString('accessToken');
+
+    if (storedToken == null) {
+      throw Exception('No access token found.');
+    }
+
+    final url = Uri.parse('${Constants.baseUrl}employee/propose');
+
+    try {
+      var request = {
+        "category": 3,
+        "start_date": DateFormat("yyyy-MM-dd").format(date),
+        "reason": reason,
+        "time_checkin": checkIn,
+        "time_checkout": checkOut,
+      };
+
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $storedToken', // Thêm token vào header
+        },
+        body: jsonEncode(request),
+      );
+
+      if (response.statusCode == 200) {
+        return ResponseEmpty.fromJson(jsonDecode(response.body));
+      } else {
+        // Xử lý lỗi nếu cần
+        print('Error: ${response.statusCode} - ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Lỗi khi gửi yêu cầu: $e');
+      return null;
+    }
+  }
+
+  static Future<ResponseEmpty?> createOverTimePropose(
+    DateTime date,
+    String checkIn,
+    String checkOut,
+    String reason,
+    String result,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedToken = prefs.getString('accessToken');
+
+    if (storedToken == null) {
+      throw Exception('No access token found.');
+    }
+
+    final url = Uri.parse('${Constants.baseUrl}employee/propose');
+
+    try {
+      var request = {
+        "category": 1,
+        "start_date": DateFormat("yyyy-MM-dd").format(date),
+        "time_checkin": checkIn,
+        "time_checkout": checkOut,
+        "reason": reason,
+        "overtime_results": result,
+      };
+
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $storedToken', // Thêm token vào header
+        },
+        body: jsonEncode(request),
+      );
+
+      if (response.statusCode == 200) {
+        return ResponseEmpty.fromJson(jsonDecode(response.body));
+      } else {
+        // Xử lý lỗi nếu cần
+        print('Error: ${response.statusCode} - ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Lỗi khi gửi yêu cầu: $e');
+      return null;
+    }
+  }
+
+  static Future<ResponseEmpty?> createChangeShiftPropose(
+    DateTime startDate,
+    String reason,
+    WorkingHour current,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedToken = prefs.getString('accessToken');
+
+    if (storedToken == null) {
+      throw Exception('No access token found.');
+    }
+
+    final url = Uri.parse('${Constants.baseUrl}employee/propose');
+
+    try {
+      var request = {
+        "category": 2,
+        "reason": reason,
+        "start_date": DateFormat("yyyy-MM-dd").format(startDate),
+        "current_working_change": current.index + 1,
+        "current_working_hours": WorkingHour.values
+                .firstWhere((element) => element != current)
+                .index +
+            1,
+      };
+
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $storedToken', // Thêm token vào header
+        },
+        body: jsonEncode(request),
+      );
+
+      if (response.statusCode == 200) {
+        return ResponseEmpty.fromJson(jsonDecode(response.body));
+      } else {
+        // Xử lý lỗi nếu cần
+        print('Error: ${response.statusCode} - ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Lỗi khi gửi yêu cầu: $e');
+      return null;
+    }
+  }
+
+  static Future<ResponseEmpty?> createOnLeavePropose(
+    DateTime startDate,
+    DateTime endDate,
+    String reason,
+    double generalLeave,
+    int startShiftOff,
+    String? phone,
+    int? typeLeave,
+    DateTime timeCheckin,
+    DateTime timeCheckout,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedToken = prefs.getString('accessToken');
+
+    if (storedToken == null) {
+      throw Exception('No access token found.');
+    }
+
+    final url = Uri.parse('${Constants.baseUrl}employee/propose');
+
+    try {
+      var request = {
+        "category": 0,
+        "phone": phone,
+        "reason": reason,
+        "startTime": DateFormat("yyyy-MM-dd").format(startDate),
+        "endTime": DateFormat("yyyy-MM-dd").format(endDate),
+        "start_shift_off": startShiftOff,
+        "general_leave": generalLeave,
+        "type_leave": typeLeave,
+        "status": 0,
+        "timeCheckin": DateFormat("yyyy-MM-ddTHH:mm:ss").format(timeCheckin),
+        "timeCheckout": DateFormat("yyyy-MM-ddTHH:mm:ss").format(timeCheckout),
+      };
+
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $storedToken', // Thêm token vào header
+        },
+        body: jsonEncode(request),
+      );
+
+      if (response.statusCode == 200) {
+        return ResponseEmpty.fromJson(jsonDecode(response.body));
+      } else {
+        // Xử lý lỗi nếu cần
+        print('Error: ${response.statusCode} - ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Lỗi khi gửi yêu cầu: $e');
+      return null;
+    }
+  }
+
+  static Future<ResponseEmpty?> createPropose() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedToken = prefs.getString('accessToken');
+
+    if (storedToken == null) {
+      throw Exception('No access token found.');
+    }
+
+    final url = Uri.parse('${Constants.baseUrl}employee/propose');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $storedToken', // Thêm token vào header
+        },
+        body: jsonEncode(<String, dynamic>{
+          // Thêm dữ liệu cần thiết vào body ở đây
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return ResponseEmpty.fromJson(jsonDecode(response.body));
+      } else {
+        // Xử lý lỗi nếu cần
+        print('Error: ${response.statusCode} - ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Lỗi khi gửi yêu cầu: $e');
+      return null;
+    }
+  }
+
   static Future<List<AttendanceResponses>> getAttendance(
       String accessToken, String startDate, String endDate) async {
     final Uri uri =

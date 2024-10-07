@@ -15,13 +15,13 @@ import 'package:flutter_app/apis/http_base.dart' as _i277;
 import 'package:flutter_app/apis/payslips/payslip_api.dart' as _i643;
 import 'package:flutter_app/apis/profiles/profile_api.dart' as _i350;
 import 'package:flutter_app/apis/proposes/propose_api.dart' as _i545;
-import 'package:flutter_app/controllers/attendance_controller.dart' as _i498;
 import 'package:flutter_app/controllers/attendance_controller_2.dart' as _i296;
 import 'package:flutter_app/controllers/authentication_controller.dart'
     as _i404;
 import 'package:flutter_app/controllers/form_controller.dart' as _i444;
 import 'package:flutter_app/controllers/home_controller.dart' as _i831;
 import 'package:flutter_app/controllers/payment_controller.dart' as _i635;
+import 'package:flutter_app/services/api.dart' as _i1029;
 import 'package:flutter_app/services/application_service.dart' as _i838;
 import 'package:flutter_app/services/cache_service.dart' as _i611;
 import 'package:flutter_app/services/form_service.dart' as _i522;
@@ -43,11 +43,15 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i296.AttendanceControllers>(
         () => _i296.AttendanceControllers());
+    gh.factory<_i1029.Api>(() => _i1029.Api());
     gh.factory<_i474.IConfigBase>(
       () => _i474.BetaConfig(),
       registerFor: {_test},
     );
     gh.factory<_i611.ICacheService>(() => _i611.CacheService());
+    gh.factory<_i522.IFormService>(() => _i522.FormService(gh<_i1029.Api>()));
+    gh.factory<_i444.FormController>(
+        () => _i444.FormController(gh<_i522.IFormService>()));
     gh.factory<_i692.HeaderProvider>(
         () => _i692.HeaderProvider(gh<_i611.ICacheService>()));
     gh.factory<_i277.IHttpBase>(() => _i277.HttpBase(
@@ -65,12 +69,6 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i350.ProfileApi>(),
           gh<_i611.ICacheService>(),
         ));
-    gh.factory<_i522.IFormService>(
-        () => _i522.FormService(gh<_i545.ProposeApi>()));
-    gh.factory<_i444.FormController>(
-        () => _i444.FormController(gh<_i522.IFormService>()));
-    // gh.factory<_i498.AttendanceController>(
-    //     () => _i498.AttendanceController(gh<_i838.IApplicationService>()));
     gh.factory<_i831.HomeController>(
         () => _i831.HomeController(gh<_i838.IApplicationService>()));
     gh.factory<_i635.PaymentController>(

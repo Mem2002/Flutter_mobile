@@ -25,7 +25,7 @@ class OnLeaveFormState extends State<OnLeaveFormView> {
   int select = 0;
   final TextEditingController controller = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  final IApplicationService service = GetIt.instance.get<IApplicationService>();
+  // final IApplicationService service = GetIt.instance.get<IApplicationService>();
   DateTime currentTime = DateTime.now();
   double? totalDay = 0.5;
   ShiftOff shiftOff = ShiftOff.morning;
@@ -36,18 +36,18 @@ class OnLeaveFormState extends State<OnLeaveFormView> {
     ShiftOff.night
   ];
 
-  void loadProfile() async {
-    EasyLoading.show();
-    var profile = await service.getProfile();
-    phoneController.text = profile?.phone ?? "";
-    EasyLoading.dismiss();
-  }
+  // void loadProfile() async {
+  //   EasyLoading.show();
+  //   var profile = await service.getProfile();
+  //   phoneController.text = profile?.phone ?? "";
+  //   EasyLoading.dismiss();
+  // }
 
-  @override
-  void initState() {
-    loadProfile();
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   loadProfile();
+  //   super.initState();
+  // }
 
   @override
   void dispose() {

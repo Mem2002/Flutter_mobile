@@ -2,6 +2,8 @@ import 'package:flutter_app/apis/proposes/propose_api.dart';
 import 'package:flutter_app/apis/response_base.dart';
 import 'package:flutter_app/models/form_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/services/api.dart';
+import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:intl/intl.dart';
 
@@ -11,17 +13,19 @@ abstract class IFormService {
   Future<List<FormModel>> getProposesAsync(
       {DateTime? from, DateTime? to, int page = 1});
   Future<ResponseEmpty?> createProposeAsync(FormModel form);
+  //Phản hồi này có thể ở dạng JSON, chứa các thông tin như tình trạng thành công hay thất bại, cùng với các thông điệp liên quan.
+  //phản hồi này sẽ được chuyển đổi thành một đối tượng ResponseEmpty (hoặc một đối tượng khác tương ứng) thông qua phương thức fromJson.
   Future<ResponseEmpty?> deleteProposeAsync(int id);
 }
 
 @Injectable(as: IFormService)
-class FormService extends IFormService {
-  ProposeApi api;
+class FormService extends IFormService { 
+  Api api;
   FormService(this.api);
   @override
   Future<List<FormModel>> getProposesAsync(
       {DateTime? from, DateTime? to, int page = 1}) async {
-    var res = await api.getProposes(from: from, to: to, page: page);
+    var res = await Api.getProposes(from: from, to: to, page: page);
     if (res == null) {
       return [];
     }
@@ -56,7 +60,7 @@ class FormService extends IFormService {
       case FormType.onLeave:
         var endTime =
             form.startTime.add(Duration(days: (form.days ?? 0.5).ceil()));
-        return api.createOnLeavePropose(
+        return Api.createOnLeavePropose(
             form.startTime,
             endTime,
             form.reason,
@@ -67,28 +71,28 @@ class FormService extends IFormService {
             form.timeCheckin,
             form.timeCheckout);
       case FormType.ot:
-        return api.createOverTimePropose(
+        return Api.createOverTimePropose(
             form.startTime,
             DateFormat("HH:mm:ss").format(form.startTime),
             DateFormat("HH:mm:ss").format(form.endTime ?? DateTime.now()),
             form.reason,
             form.overtimeResults ?? "");
       case FormType.addAttendance:
-        return api.createAddTimePropose(
+        return Api.createAddTimePropose(
             form.startTime,
             DateFormat("HH:mm:ss").format(form.startTime),
             DateFormat("HH:mm:ss").format(form.endTime ?? DateTime.now()),
             form.reason);
       case FormType.changeShift:
       default:
-        return api.createChangeShiftPropose(form.startTime, form.reason,
+        return Api.createChangeShiftPropose(form.startTime, form.reason,
             form.workingHour ?? WorkingHour.morningAfternoon);
     }
   }
 
   @override
   Future<ResponseEmpty?> deleteProposeAsync(int id) async {
-    var res = await api.deletePropose(id);
+    var res = await Api.deletePropose(id);
     return res;
   }
 }
