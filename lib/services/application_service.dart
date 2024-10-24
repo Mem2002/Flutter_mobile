@@ -141,7 +141,7 @@ class ApplicationService extends IApplicationService {
   Future setCheckoutable() async {
     var checkoutable = await attendanceApi.checkoutable();
     await cacheService
-        .setAsync("Checkoutable", {"checkout": checkoutable?.error == false});
+        .setAsync("Checkoutable", {"checkout": checkoutable?.message == false});
   }
 
   // @override

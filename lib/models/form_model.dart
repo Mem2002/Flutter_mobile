@@ -36,6 +36,8 @@ class FormModel {
       this.typeLeave,
       required this.timeCheckin,
       required this.timeCheckout});
+
+
 }
 
 enum AttendanceType { checkInt, checkOut }
@@ -57,3 +59,4 @@ class AttendanceTimeModel {
   DateTime time;
   AttendanceTimeModel({required this.time, required this.type});
 }
+

@@ -34,4 +34,14 @@ class AttendanceResponses {
         "checkIn": checkIn.toIso8601String(),
         "checkOut": checkOut?.toIso8601String(),
       };
+
+        // Thêm phương thức khởi tạo từ month và year (nếu cần)
+  // factory AttendanceResponses.fromMonthYear(int month, int year) {
+  //   // Logic tạo đối tượng từ month và year
+  //   return AttendanceResponses(
+  //     date: DateTime(year, month),
+  //     checkIn: DateTime(year, month), // Hoặc giá trị khác phù hợp
+  //     checkOut: null, // Hoặc giá trị khác phù hợp
+  //   );
+  // }
 }

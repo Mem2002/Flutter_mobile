@@ -2,6 +2,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/pages/form_page.dart';
+import 'package:flutter_app/pages/login_page.dart';
 import 'package:flutter_app/pages/qr_scanner.dart';
 import 'package:flutter_app/pages/setting_page.dart';
 import 'package:flutter_app/pages/attendance_page.dart';
@@ -217,15 +218,33 @@ class HomePageState extends State<HomePage> {
                         icon: "assets/images/ic_propose.png",
                       ),
                     ),
+                    // Container(
+                    //   height: 56,
+                    //   margin: const EdgeInsets.only(top: 16),
+                    //   // child: PrimaryButton(
+                    //   //   onPressed: navigateToSetting,
+                    //   //   title: AppLocalizations.of(context)!.home_setting,
+                    //   //   icon: "assets/images/ic_setting.png",
+                    //   // ),
+                    // ),
                     Container(
                       height: 56,
                       margin: const EdgeInsets.only(top: 16),
-                      // child: PrimaryButton(
-                      //   onPressed: navigateToSetting,
-                      //   title: AppLocalizations.of(context)!.home_setting,
-                      //   icon: "assets/images/ic_setting.png",
-                      // ),
-                    )
+                      child: PrimaryButton(
+                        onPressed: navigateToLogout,
+                        title: AppLocalizations.of(context)!.home_logout,
+                        icon: "assets/images/ic_logout.png", // Đảm bảo có icon này
+                      ),
+                    ),
+                    //   Container(
+                    //   height: 56,
+                    //   margin: const EdgeInsets.only(top: 16),
+                    //   child: PrimaryButton(
+                    //     onPressed: navigateToSetting,
+                    //     title: AppLocalizations.of(context)!.home_setting,
+                    //     icon: "assets/images/ic_setting.png",
+                    //   ),
+                    // )
                   ],
                 ),
               ),
@@ -235,6 +254,8 @@ class HomePageState extends State<HomePage> {
       ),
     );
   }
+
+
 
   navigateToScanner() {
     Navigator.of(context).push(SidePageRoute(const ScannerPage()));
@@ -251,6 +272,13 @@ class HomePageState extends State<HomePage> {
   navigateToForm() {
     Navigator.of(context).push(SidePageRoute(const FormPage()));
   }
+
+  navigateToLogout() {
+    Navigator.of(context).push(SidePageRoute(const LoginPage()));
+  }
+  //   navigateToSetting() {
+  //   Navigator.of(context).push(SidePageRoute(const SettingPage()));
+  // }
 
   @override
   void initState() {

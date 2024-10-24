@@ -73,15 +73,14 @@ class FormService extends IFormService {
       case FormType.ot:
         return Api.createOverTimePropose(
             form.startTime,
-            DateFormat("HH:mm:ss").format(form.startTime),
-            DateFormat("HH:mm:ss").format(form.endTime ?? DateTime.now()),
+            form.startTime,
+            form.endTime ?? DateTime.now(),
             form.reason,
             form.overtimeResults ?? "");
       case FormType.addAttendance:
-        return Api.createAddTimePropose(
+        return Api.createAddTimePropose( 
             form.startTime,
-            DateFormat("HH:mm:ss").format(form.startTime),
-            DateFormat("HH:mm:ss").format(form.endTime ?? DateTime.now()),
+            form.endTime ?? DateTime.now(),
             form.reason);
       case FormType.changeShift:
       default:

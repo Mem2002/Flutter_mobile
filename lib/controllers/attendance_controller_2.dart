@@ -11,7 +11,7 @@ import 'package:intl/intl.dart';
 class AttendanceControllers {
   ValueNotifier<List<AttendanceResponses>> data = ValueNotifier([]);
   ValueNotifier<AttendanceResponses?> today = ValueNotifier(null);
-   ValueNotifier<List<DateTime>> absentDays = ValueNotifier([]); // Thêm dòng này
+  ValueNotifier<List<DateTime>> absentDays = ValueNotifier([]); // Thêm dòng này
 
   late String accessToken;
 

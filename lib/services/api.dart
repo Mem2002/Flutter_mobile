@@ -104,14 +104,7 @@ class Api {
           'Authorization': 'Bearer $storedToken', // Thêm token vào header
         },
       );
-
-      if (response.statusCode == 200) {
-        return ResponseEmpty.fromJson(jsonDecode(response.body));
-      } else {
-        // Xử lý lỗi nếu cần
-        print('Error: ${response.statusCode} - ${response.body}');
-        return null;
-      }
+      return ResponseEmpty.fromJson(jsonDecode(response.body));
     } catch (e) {
       print('Lỗi khi gửi yêu cầu: $e');
       return null;
@@ -119,9 +112,8 @@ class Api {
   }
 
   static Future<ResponseEmpty?> createAddTimePropose(
-    DateTime date,
-    String checkIn,
-    String checkOut,
+    DateTime startTime,
+    DateTime endTime,
     String reason,
   ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -136,10 +128,11 @@ class Api {
     try {
       var request = {
         "category": 3,
-        "start_date": DateFormat("yyyy-MM-dd").format(date),
+        "startTime": DateFormat("yyyy-MM-dd").format(startTime),
+        "status": 0,
         "reason": reason,
-        "time_checkin": checkIn,
-        "time_checkout": checkOut,
+        "timeCheckin": startTime.toIso8601String(),
+        "timeCheckout": endTime.toIso8601String(),
       };
 
       final response = await http.post(
@@ -150,14 +143,7 @@ class Api {
         },
         body: jsonEncode(request),
       );
-
-      if (response.statusCode == 200) {
-        return ResponseEmpty.fromJson(jsonDecode(response.body));
-      } else {
-        // Xử lý lỗi nếu cần
-        print('Error: ${response.statusCode} - ${response.body}');
-        return null;
-      }
+      return ResponseEmpty.fromJson(jsonDecode(response.body));
     } catch (e) {
       print('Lỗi khi gửi yêu cầu: $e');
       return null;
@@ -166,8 +152,8 @@ class Api {
 
   static Future<ResponseEmpty?> createOverTimePropose(
     DateTime date,
-    String checkIn,
-    String checkOut,
+    DateTime startTime,
+    DateTime endTime,
     String reason,
     String result,
   ) async {
@@ -184,8 +170,9 @@ class Api {
       var request = {
         "category": 1,
         "start_date": DateFormat("yyyy-MM-dd").format(date),
-        "time_checkin": checkIn,
-        "time_checkout": checkOut,
+        "timeCheckin": startTime.toIso8601String(),
+        "timeCheckout": endTime.toIso8601String(),
+        "status": 0,
         "reason": reason,
         "overtime_results": result,
       };
@@ -198,14 +185,7 @@ class Api {
         },
         body: jsonEncode(request),
       );
-
-      if (response.statusCode == 200) {
-        return ResponseEmpty.fromJson(jsonDecode(response.body));
-      } else {
-        // Xử lý lỗi nếu cần
-        print('Error: ${response.statusCode} - ${response.body}');
-        return null;
-      }
+      return ResponseEmpty.fromJson(jsonDecode(response.body));
     } catch (e) {
       print('Lỗi khi gửi yêu cầu: $e');
       return null;
@@ -229,6 +209,7 @@ class Api {
     try {
       var request = {
         "category": 2,
+        "status": 0,
         "reason": reason,
         "start_date": DateFormat("yyyy-MM-dd").format(startDate),
         "current_working_change": current.index + 1,
@@ -246,14 +227,7 @@ class Api {
         },
         body: jsonEncode(request),
       );
-
-      if (response.statusCode == 200) {
-        return ResponseEmpty.fromJson(jsonDecode(response.body));
-      } else {
-        // Xử lý lỗi nếu cần
-        print('Error: ${response.statusCode} - ${response.body}');
-        return null;
-      }
+      return ResponseEmpty.fromJson(jsonDecode(response.body));
     } catch (e) {
       print('Lỗi khi gửi yêu cầu: $e');
       return null;
@@ -291,8 +265,8 @@ class Api {
         "general_leave": generalLeave,
         "type_leave": typeLeave,
         "status": 0,
-        "timeCheckin": DateFormat("yyyy-MM-ddTHH:mm:ss").format(timeCheckin),
-        "timeCheckout": DateFormat("yyyy-MM-ddTHH:mm:ss").format(timeCheckout),
+        "timeCheckin": timeCheckin.toIso8601String(),
+        "timeCheckout": timeCheckout.toIso8601String(),
       };
 
       final response = await http.post(
@@ -303,14 +277,7 @@ class Api {
         },
         body: jsonEncode(request),
       );
-
-      if (response.statusCode == 200) {
-        return ResponseEmpty.fromJson(jsonDecode(response.body));
-      } else {
-        // Xử lý lỗi nếu cần
-        print('Error: ${response.statusCode} - ${response.body}');
-        return null;
-      }
+      return ResponseEmpty.fromJson(jsonDecode(response.body));
     } catch (e) {
       print('Lỗi khi gửi yêu cầu: $e');
       return null;
@@ -351,6 +318,30 @@ class Api {
       return null;
     }
   }
+
+static Future<Map<String, dynamic>> getIncome(
+    String accessToken, int month, int year) async {
+  final Uri uri = Uri.parse('${Constants.baseUrl}income').replace(queryParameters: {
+    'month': month.toString(),
+    'year': year.toString(),
+  });
+
+  final response = await http.get(
+    uri,
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $accessToken',
+    },
+  );
+
+  if (response.statusCode == 200) {
+    return jsonDecode(response.body); // Trả về Map<String, dynamic>
+  } else {
+    print('Error: ${response.statusCode} - ${response.body}');
+    throw Exception('Unable to load income data');
+  }
+}
+
 
   static Future<List<AttendanceResponses>> getAttendance(
       String accessToken, String startDate, String endDate) async {

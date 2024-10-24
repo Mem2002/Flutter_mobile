@@ -49,6 +49,7 @@
     "phan_tram_kpi_hoan_thanh_cong_viec": "KPI công việc",
     "deviceId_warning": "Your device has not been activated, please contact human resources for activation",
     "home_form": "Form",
+    "home_logout": "Logout",
     "form_total_days": "Total days",
     "form_start_time": "Start time",
     "form_reason": "Reason",

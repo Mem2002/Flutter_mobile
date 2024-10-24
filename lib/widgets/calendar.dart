@@ -40,11 +40,11 @@ class CalendarWidgetState extends State<CalendarWidget> {
     });
 
     var displayDays =
-        allDays.where((e) => e.weekday != DateTime.sunday).toList();
+        allDays.where((e) => e.weekday != DateTime.sunday).toList(); //does not contain Sunday
 
     var skipDays = DateTime(now.year, now.month, 2).weekday -
         1 -
-        (firstMonth.weekday == DateTime.sunday ? 1 : 0);
+        (firstMonth.weekday == DateTime.sunday ? 1 : 0); //kiểm tra xem có phải là chủ nhật không nếu không trừ đi 1 
     var size = MediaQuery.of(context).size;
     var rate = (size.width - padding * 2) * 2.0 / (size.height - 56 * 2);
 

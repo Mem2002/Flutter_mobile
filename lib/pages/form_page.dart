@@ -147,7 +147,7 @@ class FormState extends State<FormPage> {
     EasyLoading.show();
     var res = await controller.deleteAsync(form.id ?? 0);
     EasyLoading.dismiss();
-    if (res?.error == false) {
+    if (res?.message == false) {
       EasyLoading.showSuccess('Xóa thành công');
       reloadData();
       return;
