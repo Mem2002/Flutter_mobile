@@ -19,7 +19,7 @@ class HomeController {
   // HomeController.
 
   ValueNotifier<ProfileDto?> data = ValueNotifier<ProfileDto?>(null);
-  ValueNotifier<ReportDto?> report = ValueNotifier<ReportDto?>(null);
+  // ValueNotifier<ReportDto?> report = ValueNotifier<ReportDto?>(null);
   ValueNotifier<AttendanceResponses?> today = ValueNotifier(null);
   // Future loadToday() async {
   //   var formater = DateFormat("yyyy-MM-dd");

@@ -17,7 +17,7 @@ abstract class IApplicationService {
   // Future<CheckInResponse?> checkIn();
   // Future<CheckOutResponse?> checkOut(DateTime date);
   // Future<CheckOutResponse?> forceCheckOut();
-  Future<ReportDto?> getReport(String from, String to);
+  // Future<ReportDto?> getReport(String from, String to);
   // Future<AttendanceResponses?> getAttendance(String from, String to);
   Future<PayslipResponse?> getPayslip(int month, int year);
   Future<ProfileDto?> getProfile();
@@ -54,11 +54,11 @@ class ApplicationService extends IApplicationService {
     return res?.data;
   }
 
-  @override
-  Future<ReportDto?> getReport(String from, String to) async {
-    var res = await attendanceApi.reportAttendance(from, to);
-    return res?.data;
-  }
+  // @override
+  // Future<ReportDto?> getReport(String from, String to) async {
+  //   var res = await attendanceApi.reportAttendance(from, to);
+  //   return res?.data;
+  // }
 
   // @override
   // Future<CheckInResponse?> checkIn() async {

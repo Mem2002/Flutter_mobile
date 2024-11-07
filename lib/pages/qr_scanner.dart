@@ -5,7 +5,6 @@ import 'package:qr_scanner_overlay/qr_scanner_overlay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const bgColor = Color(0xfffafafa);
-
 class ScannerPage extends StatefulWidget {
   const ScannerPage({super.key});
 
@@ -19,8 +18,6 @@ class _ScannerPageState extends State<ScannerPage> {
     formats: const [BarcodeFormat.qrCode],
     detectionSpeed: DetectionSpeed.noDuplicates,
   );
-
-  String userId = '';
   String accessToken = '';
 
   @override
@@ -35,10 +32,6 @@ class _ScannerPageState extends State<ScannerPage> {
     setState(() {
       accessToken = prefs.getString('accessToken') ?? '';
     });
-
-    // Debug: In giá trị userId
-    // print('User ID: $userId');
-    //  accessToken = prefs.getString('accessToken') ?? '';
     print('User ID: $accessToken');
   }
 
@@ -53,8 +46,6 @@ class _ScannerPageState extends State<ScannerPage> {
       _showSnackBar('QR code is required');
       return;
     }
-
-    // Gọi API với code, scanTime, userId
     final result = await Api.sendCodeToBackend(code);
     _showSnackBar(result);
   }

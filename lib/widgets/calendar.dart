@@ -44,7 +44,7 @@ class CalendarWidgetState extends State<CalendarWidget> {
 
     var skipDays = DateTime(now.year, now.month, 2).weekday -
         1 -
-        (firstMonth.weekday == DateTime.sunday ? 1 : 0); //kiểm tra xem có phải là chủ nhật không nếu không trừ đi 1 
+        (firstMonth.weekday == DateTime.sunday ? 1 : 0); 
     var size = MediaQuery.of(context).size;
     var rate = (size.width - padding * 2) * 2.0 / (size.height - 56 * 2);
 
@@ -61,7 +61,7 @@ class CalendarWidgetState extends State<CalendarWidget> {
                   height: 32,
                   width: 32,
                   child: Text(
-                    i.toDayOfWeek(context), //gọi từ t2 -> t7 ở file date_extensions.dart
+                    i.toDayOfWeek(context),
                   ),
                 )),
             ],

@@ -37,19 +37,18 @@ class Api {
         }),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $storedToken', // Thêm token vào header
+          'Authorization': 'Bearer $storedToken', 
         },
       );
 
       if (response.statusCode == 200) {
         return ProposeDataResponse.fromJson(jsonDecode(response.body));
       } else {
-        // Xử lý lỗi nếu cần
         print('Error: ${response.statusCode} - ${response.body}');
         return null;
       }
     } catch (e) {
-      print('Lỗi khi gửi yêu cầu: $e');
+      print('Error sending request: $e');
       return null;
     }
   }
@@ -69,19 +68,19 @@ class Api {
         url,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $storedToken', // Thêm token vào header
+          'Authorization': 'Bearer $storedToken',
         },
       );
 
       if (response.statusCode == 200) {
         return ProposeDataResponse.fromJson(jsonDecode(response.body));
       } else {
-        // Xử lý lỗi nếu cần
+
         print('Error: ${response.statusCode} - ${response.body}');
         return null;
       }
     } catch (e) {
-      print('Lỗi khi gửi yêu cầu: $e');
+      print('Error sending request: $e');
       return null;
     }
   }
@@ -101,12 +100,12 @@ class Api {
         url,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $storedToken', // Thêm token vào header
+          'Authorization': 'Bearer $storedToken',
         },
       );
       return ResponseEmpty.fromJson(jsonDecode(response.body));
     } catch (e) {
-      print('Lỗi khi gửi yêu cầu: $e');
+      print('Error sending request: $e');
       return null;
     }
   }
@@ -145,7 +144,7 @@ class Api {
       );
       return ResponseEmpty.fromJson(jsonDecode(response.body));
     } catch (e) {
-      print('Lỗi khi gửi yêu cầu: $e');
+      print('Error sending request: $e');
       return null;
     }
   }
@@ -187,7 +186,7 @@ class Api {
       );
       return ResponseEmpty.fromJson(jsonDecode(response.body));
     } catch (e) {
-      print('Lỗi khi gửi yêu cầu: $e');
+      print('Error sending request: $e');
       return null;
     }
   }
@@ -223,7 +222,7 @@ class Api {
         url,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $storedToken', // Thêm token vào header
+          'Authorization': 'Bearer $storedToken',
         },
         body: jsonEncode(request),
       );
@@ -299,17 +298,15 @@ class Api {
         url,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $storedToken', // Thêm token vào header
+          'Authorization': 'Bearer $storedToken',
         },
         body: jsonEncode(<String, dynamic>{
-          // Thêm dữ liệu cần thiết vào body ở đây
         }),
       );
 
       if (response.statusCode == 200) {
         return ResponseEmpty.fromJson(jsonDecode(response.body));
       } else {
-        // Xử lý lỗi nếu cần
         print('Error: ${response.statusCode} - ${response.body}');
         return null;
       }
@@ -337,14 +334,13 @@ static Future<int> getIncome(String accessToken, String startDate, String endDat
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       if (data.containsKey('income')) {
-        // Kiểm tra kiểu dữ liệu và chuyển đổi nếu cần
-         print('Income key found in response: ${data['income']}'); // Log giá trị income
+        print('Income key found in response: ${data['income']}'); 
         var incomeValue = data['income'];
-          print('Raw income from API: $incomeValue'); // Kiểm tra giá trị gốc từ API
+          print('Raw income from API: $incomeValue'); 
         if (incomeValue is double) {
-          return incomeValue.toInt(); // Chuyển đổi từ double sang int
+          return incomeValue.toInt(); 
         } else if (incomeValue is int) {
-          return incomeValue; // Trả về trực tiếp nếu đã là int
+          return incomeValue; 
         } else {
           throw Exception('Unexpected income type: ${incomeValue.runtimeType}');
         }
@@ -357,7 +353,7 @@ static Future<int> getIncome(String accessToken, String startDate, String endDat
     }
   } catch (e) {
     print('Caught error: $e');
-    rethrow; // Ném lại ngoại lệ để xử lý ở nơi gọi
+    rethrow; 
   }
 }
 
@@ -390,22 +386,6 @@ static Future<int> getIncome(String accessToken, String startDate, String endDat
     }
   }
 
-  // static Future<List<Payslip>> getPayslip(String accessToken) async {
-  //   final response =
-  //       await http.get(Uri.parse('${Constants.baseUrl}payslip'), headers: {
-  //     'Content-Type': 'application/json; charset=UTF-8',
-  //     'Authorization': 'Bearer $accessToken'
-  //   });
-
-  //   if (response.statusCode == 200) {
-  //     List<dynamic> body = jsonDecode(response.body);
-  //     return body.map((item) => Payslip.fromJson(item)).toList();
-  //   } else {
-  //     print('Error: ${response.statusCode} - ${response.body}');
-  //     throw Exception('Failed to load payslips');
-  //   }
-  // }
-
   static Future<String> sendCodeToBackend(String code) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? storedToken = prefs.getString('accessToken');
@@ -421,7 +401,7 @@ static Future<int> getIncome(String accessToken, String startDate, String endDat
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization':
-              'Bearer $storedToken', // Include the token in the header
+              'Bearer $storedToken',
         },
         body: jsonEncode(<String, dynamic>{
           'code': code,
@@ -429,12 +409,12 @@ static Future<int> getIncome(String accessToken, String startDate, String endDat
       );
 
       if (response.statusCode == 200) {
-        return 'Chấm công thành công';
+        return 'Successful attendance';
       } else {
-        return 'Lỗi khi chấm công: ${response.body}';
+        return 'Error in timekeeping: ${response.body}';
       }
     } catch (e) {
-      return 'Lỗi khi gửi yêu cầu: $e';
+      return 'Error sending request: $e';
     }
   }
 
@@ -443,10 +423,9 @@ static Future<int> getIncome(String accessToken, String startDate, String endDat
     try {
       final url = Uri.parse('${Constants.baseUrl}login');
 
-      // Kiểm tra xem email và password có hợp lệ không
       if (email.trim().isEmpty || password.trim().isEmpty) {
         print('Email hoặc mật khẩu không được để trống');
-        return null; // Trả về null nếu dữ liệu không hợp lệ
+        return null;
       }
 
       var res = await http.post(
@@ -460,20 +439,17 @@ static Future<int> getIncome(String accessToken, String startDate, String endDat
         }),
       );
 
-      // Kiểm tra phản hồi từ API
       if (res.statusCode == 200) {
         var body = loginResponseFromJson(res.body);
 
-        // Kiểm tra nếu có dữ liệu group
         if (body.dt?.data?.groupWithRole?.group != null) {
           String groupName = body.dt!.data!.groupWithRole!.group!.groupName;
 
-          // Chỉ cho phép đăng nhập nếu group_name là "Employee"
           if (groupName == "Employee") {
-            return body; // Trả về kết quả nếu group_name là Employee
+            return body; 
           } else {
             print('Người dùng không thuộc nhóm Employee');
-            return null; // Trả về null nếu không phải Employee
+            return null;
           }
         } else {
           print('Không lấy được thông tin nhóm từ API');
@@ -485,29 +461,15 @@ static Future<int> getIncome(String accessToken, String startDate, String endDat
       }
     } catch (e) {
       print('Đã xảy ra lỗi: $e');
-      return null; // Trả về null nếu xảy ra lỗi
+      return null; 
     }
   }
 
-  // static Future<List<Payslip>> getPayslipWithStoredToken(String startDate, String endDate) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? storedToken = prefs.getString('accessToken');
-
-  //   if (storedToken != null) {
-  //     return await getPayslip(
-  //         storedToken); // Call your existing getPayslip method
-  //   } else {
-  //     throw Exception('No access token found.');
-  //   }
-  // }
-
-  // Lưu access token vào SharedPreferences
   static Future<void> saveAccessToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('accessToken', token);
   }
 
-  // Lấy access token từ SharedPreferences
   static Future<String?> getAccessToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('accessToken');

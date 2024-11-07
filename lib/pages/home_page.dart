@@ -75,7 +75,6 @@ class HomePageState extends State<HomePage> {
                 valueListenable: controller.data,
                 builder: (context, value, child) {
                   String name = value?.username ?? "";
-                  // String activeDevice = value?.activeDeviceId ?? "";
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -106,24 +105,6 @@ class HomePageState extends State<HomePage> {
                             ],
                           )),
                         ],
-                      ),
-                      Visibility(
-                        // visible: activeDevice != deviceId,
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 12),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withOpacity(0.7),
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Text(
-                            AppLocalizations.of(context)!.deviceId_warning,
-                            style: NormalTextStyle(
-                                color: Theme.of(context).colorScheme.onPrimary),
-                          ),
-                        ),
                       ),
                       ValueListenableBuilder(
                         valueListenable: controller.today,
@@ -213,38 +194,11 @@ class HomePageState extends State<HomePage> {
                       height: 56,
                       margin: const EdgeInsets.only(top: 16),
                       child: PrimaryButton(
-                        onPressed: navigateToForm,
-                        title: AppLocalizations.of(context)!.home_form,
-                        icon: "assets/images/ic_propose.png",
-                      ),
-                    ),
-                    // Container(
-                    //   height: 56,
-                    //   margin: const EdgeInsets.only(top: 16),
-                    //   // child: PrimaryButton(
-                    //   //   onPressed: navigateToSetting,
-                    //   //   title: AppLocalizations.of(context)!.home_setting,
-                    //   //   icon: "assets/images/ic_setting.png",
-                    //   // ),
-                    // ),
-                    Container(
-                      height: 56,
-                      margin: const EdgeInsets.only(top: 16),
-                      child: PrimaryButton(
                         onPressed: navigateToLogout,
                         title: AppLocalizations.of(context)!.home_logout,
                         icon: "assets/images/ic_logout.png", // Đảm bảo có icon này
                       ),
                     ),
-                    //   Container(
-                    //   height: 56,
-                    //   margin: const EdgeInsets.only(top: 16),
-                    //   child: PrimaryButton(
-                    //     onPressed: navigateToSetting,
-                    //     title: AppLocalizations.of(context)!.home_setting,
-                    //     icon: "assets/images/ic_setting.png",
-                    //   ),
-                    // )
                   ],
                 ),
               ),
@@ -254,8 +208,6 @@ class HomePageState extends State<HomePage> {
       ),
     );
   }
-
-
 
   navigateToScanner() {
     Navigator.of(context).push(SidePageRoute(const ScannerPage()));
@@ -269,16 +221,13 @@ class HomePageState extends State<HomePage> {
     Navigator.of(context).push(SidePageRoute(const PaymentPage()));
   }
 
-  navigateToForm() {
-    Navigator.of(context).push(SidePageRoute(const FormPage()));
-  }
+  // navigateToForm() {
+  //   Navigator.of(context).push(SidePageRoute(const FormPage()));
+  // }
 
   navigateToLogout() {
     Navigator.of(context).push(SidePageRoute(const LoginPage()));
   }
-  //   navigateToSetting() {
-  //   Navigator.of(context).push(SidePageRoute(const SettingPage()));
-  // }
 
   @override
   void initState() {

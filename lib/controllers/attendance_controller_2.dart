@@ -11,12 +11,10 @@ import 'package:intl/intl.dart';
 class AttendanceControllers {
   ValueNotifier<List<AttendanceResponses>> data = ValueNotifier([]);
   ValueNotifier<AttendanceResponses?> today = ValueNotifier(null);
-  ValueNotifier<List<DateTime>> absentDays = ValueNotifier([]); // Thêm dòng này
+  ValueNotifier<List<DateTime>> absentDays = ValueNotifier([]);
 
   late String accessToken;
-
   AttendanceControllers();
-
   Future<void> setup() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     accessToken = prefs.getString('accessToken') ?? "";
@@ -37,23 +35,23 @@ class AttendanceControllers {
           await Api.getAttendance(accessToken, startDate, endDate);
       List<AttendanceResponses> attendanceData =
           attendanceResponses.map(convertToAttendanceData).toList();
-      data.value = attendanceData; // Cập nhật lại với dữ liệu mới
+      data.value = attendanceData;
 
-      // Tạo danh sách các ngày trong khoảng thời gian
       List<DateTime> allDays = [];
       DateTime start = DateFormat('yyyy-MM-dd').parse(startDate);
       DateTime end = DateFormat('yyyy-MM-dd').parse(endDate);
 
-      for (DateTime date = start; date.isBefore(end); date = date.add(Duration(days: 1))) {
+      for (DateTime date = start;
+          date.isBefore(end);
+          date = date.add(Duration(days: 1))) {
         allDays.add(date);
       }
 
       List<DateTime> absentDays = allDays.where((day) {
-  return !attendanceData.any((att) => att.date.isAtSameMomentAs(day));
-}).toList();
+        return !attendanceData.any((att) => att.date.isAtSameMomentAs(day));
+      }).toList();
 
-// Cập nhật lại ValueNotifier
-this.absentDays.value = absentDays;
+      this.absentDays.value = absentDays;
 
       DateTime todayDate = DateTime.now();
       var error = attendanceData

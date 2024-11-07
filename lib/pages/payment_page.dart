@@ -9,7 +9,7 @@ import 'package:mat_month_picker_dialog/mat_month_picker_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/payslip_model.dart';
 import '../widgets/item_setting.dart';
-import 'package:provider/provider.dart'; // Nếu bạn dùng Provider
+import 'package:provider/provider.dart';
 
 class PaymentPage extends StatefulWidget {
   const PaymentPage({super.key});
@@ -19,7 +19,7 @@ class PaymentPage extends StatefulWidget {
 }
 
 class _PaymentPageState extends State<PaymentPage> {
-  late PaymentController paymentController; // Thêm PaymentController
+  late PaymentController paymentController;
   DateTime currentTime = DateTime.now();
   ScrollController scrollController = ScrollController();
   double opacity = 0;
@@ -28,8 +28,7 @@ class _PaymentPageState extends State<PaymentPage> {
   void initState() {
     super.initState();
     scrollController.addListener(scrollChange);
-    // _initializeDate();
-    _loadIncome(); // Gọi phương thức lấy thu nhập
+    _loadIncome();
   }
 
   Future<void> _loadIncome() async {
@@ -40,20 +39,6 @@ class _PaymentPageState extends State<PaymentPage> {
       await paymentController.getIncome(accessToken, currentTime.month, currentTime.year);
     }
   }
-
-  // void _initializeDate() {
-  //   var now = DateTime.now();
-  //   var month = now.month - 0;
-  //   var year = now.year;
-  //   if (now.day < 10) {
-  //     month -= 1;
-  //   }
-  //   if (month <= 0) {
-  //     month += 12;
-  //     year -= 1;
-  //   }
-  //   currentTime = DateTime(year, month, 1);
-  // }
 
   void scrollChange() {
     setState(() {
@@ -76,8 +61,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
   @override
   Widget build(BuildContext context) {
-    paymentController = Provider.of<PaymentController>(context); // Lấy PaymentController từ Provider
-
+    paymentController = Provider.of<PaymentController>(context); 
     return Scaffold(
       body: Stack(
         children: [
@@ -161,7 +145,7 @@ class _PaymentPageState extends State<PaymentPage> {
   Widget _buildIncomeDisplay(int income) {
     return Center(
       child: Text(
-        "Thu nhập: ${_formatMoney(income.toDouble())}",
+        "Income: ${_formatMoney(income.toDouble())}",
         style: TextStyle(fontSize: 24),
       ),
     );
@@ -178,7 +162,7 @@ class _PaymentPageState extends State<PaymentPage> {
     if (selectedDate != null) {
       setState(() {
         currentTime = selectedDate;
-        _loadIncome(); // Tải lại thu nhập với tháng mới
+        _loadIncome();
       });
     }
   }

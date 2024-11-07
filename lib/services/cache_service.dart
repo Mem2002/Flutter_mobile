@@ -7,13 +7,7 @@ typedef InvokeAsync<T> = Future<T> Function();
 
 abstract class ICacheService {
   Future<void> setAsync(
-      String key, obj); //setAsync lưu trữ dữ liệu một cách không đồng bộ
-  // key: Một chuỗi ký tự (String) dùng để xác định đối tượng cần lưu trữ. Nó 
-  //đóng vai trò là "khóa" (key) để truy cập đối tượng khi cần.
-  // obj: Đối tượng cần được lưu trữ, có thể là bất kỳ loại dữ liệu nào (dynamic type).
-
-  //=> Hàm setAsync(String key, obj) thực hiện thao tác lưu trữ dữ liệu không đồng bộ, trong đó key là
-  // khóa để lưu dữ liệu và obj là đối tượng cần lưu
+      String key, obj);
   Future<Map<String, dynamic>?> getAsync(String key);
   Future<Map<String, dynamic>?> getOrAddAsync<T>(
       String key, InvokeAsync<T> fun);
@@ -23,8 +17,6 @@ abstract class ICacheService {
 @Injectable(as: ICacheService)
 class CacheService implements ICacheService {
   SharedPreferences? preferences;
-  //shared_preferences là một thư viện Flutter phổ biến dùng để lưu trữ dữ liệu đơn
-  // giản dưới dạng key-value (cặp khóa-giá trị) trên thiết bị.
   Future ensuredInit() async {
     preferences ??= await SharedPreferences.getInstance();
   }

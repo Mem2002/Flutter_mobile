@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 const bgColor = Color(0xfffafafa);
-
 class ResultScreen extends StatefulWidget {
   final String code;
   final Function() closeScreen;
@@ -14,7 +13,7 @@ class ResultScreen extends StatefulWidget {
   const ResultScreen({
     super.key,
     required this.code,
-    required this.closeScreen, required String resultText,
+    required this.closeScreen,
   });
 
   @override
@@ -25,11 +24,11 @@ class _ResultScreenState extends State<ResultScreen> {
   @override
   void initState() {
     super.initState();
-    _sendCodeToBackend(widget.code);  // Tự động gửi mã khi màn hình hiển thị
+    _sendCodeToBackend(widget.code); 
   }
 
   Future<void> _sendCodeToBackend(String code) async {
-    final url = Uri.parse('${Constants.baseUrl}/qr-scanner');  // Sử dụng URL từ Constants
+    final url = Uri.parse('${Constants.baseUrl}/qr-scanner'); 
     try {
       final response = await http.post(
         url,
@@ -40,17 +39,13 @@ class _ResultScreenState extends State<ResultScreen> {
           'code': code,
         }),
       );
-
       if (response.statusCode == 200) {
-        // Hiển thị thông báo thành công
-        _showSnackBar('Chấm công thành công');
+        _showSnackBar('Successful attendance');
       } else {
-        // Hiển thị thông báo thất bại
-        _showSnackBar('Lỗi khi chấm công: ${response.body}');
+        _showSnackBar('Error when checking in: ${response.body}');
       }
     } catch (e) {
-      // Xử lý lỗi
-      _showSnackBar('Lỗi khi gửi yêu cầu: $e');
+      _showSnackBar('Error sending request: $e');
     }
   }
 
@@ -77,7 +72,6 @@ class _ResultScreenState extends State<ResultScreen> {
           ),
         ),
       ),
-     
     );
   }
 }

@@ -23,16 +23,16 @@ class AttendanceApi {
   //   }
   // }
 
-  Future<AttendanceReportDto?> reportAttendance(String from, String to) async {
-    try {
-      var res = await http.get('/employee/attendance/report',
-          queryParameters: {"start_date": from, "end_date": to}, auth: true);
-      var body = attendanceReportDtoFromJson(res.body.replaceAll("\n", ""));
-      return body;
-    } catch (e) {
-      return null;
-    }
-  }
+  // Future<AttendanceReportDto?> reportAttendance(String from, String to) async {
+  //   try {
+  //     var res = await http.get('/employee/attendance/report',
+  //         queryParameters: {"start_date": from, "end_date": to}, auth: true);
+  //     var body = attendanceReportDtoFromJson(res.body.replaceAll("\n", ""));
+  //     return body;
+  //   } catch (e) {
+  //     return null;
+  //   }
+  // }
 
   // Future<CheckInResponse?> checkIn(String deviceId) async {
   //   try {

@@ -13,8 +13,6 @@ abstract class IFormService {
   Future<List<FormModel>> getProposesAsync(
       {DateTime? from, DateTime? to, int page = 1});
   Future<ResponseEmpty?> createProposeAsync(FormModel form);
-  //Phản hồi này có thể ở dạng JSON, chứa các thông tin như tình trạng thành công hay thất bại, cùng với các thông điệp liên quan.
-  //phản hồi này sẽ được chuyển đổi thành một đối tượng ResponseEmpty (hoặc một đối tượng khác tương ứng) thông qua phương thức fromJson.
   Future<ResponseEmpty?> deleteProposeAsync(int id);
 }
 

@@ -88,12 +88,12 @@ class AttendancePageState extends State<AttendancePage> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       Text(
-                                        "Giờ vào: ${p0.checkIn != null ? dateFormat.format(p0.checkIn!.toLocal()) : 'Not yet'}",
+                                        "Time to enter: ${p0.checkIn != null ? dateFormat.format(p0.checkIn!.toLocal()) : 'Not yet'}",
                                       ),
                                       Visibility(
                                         visible: p0.checkOut != null,
                                         child: Text(
-                                          "Giờ ra: ${p0.checkOut != null ? dateFormat.format(p0.checkOut!.toLocal()) : 'Not yet'}",
+                                          "Time out: ${p0.checkOut != null ? dateFormat.format(p0.checkOut!.toLocal()) : 'Not yet'}",
                                         ),
                                       ),
                                     ],
@@ -106,71 +106,64 @@ class AttendancePageState extends State<AttendancePage> {
                       );
                     }),
               ),
-              SliverToBoxAdapter(
-                child: ValueListenableBuilder<AttendanceResponses?>(
-                  valueListenable: controller.today,
-                  builder: (context, value, child) {
-                    if (value == null) {
-                      return Container(); // Trả về Container khi không có dữ liệu
-                    }
-                    var timeFormatter = DateFormat("HH:mm");
-                    return itemDisplay(
-                      "Hôm nay",
-                      timeFormatter.format(value.checkIn.toLocal()),
-                      outTime: value.checkOut == null
-                          ? null
-                          : timeFormatter.format(value.checkOut!.toLocal()),
-                    );
-                  },
-                ),
-              ),
+              // SliverToBoxAdapter(
+              //   child: ValueListenableBuilder<AttendanceResponses?>(
+              //     valueListenable: controller.today,
+              //     builder: (context, value, child) {
+              //       if (value == null) {
+              //         return Container();
+              //       }
+              //       var timeFormatter = DateFormat("HH:mm");
+              //       return itemDisplay(
+              //         "Hôm nay",
+              //         timeFormatter.format(value.checkIn.toLocal()),
+              //         outTime: value.checkOut == null
+              //             ? null
+              //             : timeFormatter.format(value.checkOut!.toLocal()),
+              //       );
+              //     },
+              //   ),
+              // ),
               SliverToBoxAdapter(
                 child: ValueListenableBuilder<List<DateTime>>(
                   valueListenable: controller.absentDays,
                   builder: (context, absentDays, child) {
-                    int totalAbsentDays =
-                        absentDays.length; // Tính tổng số ngày vắng mặt
+                    int totalAbsentDays = absentDays.length;
 
                     return Container(
-                      padding: const EdgeInsets.all(16), // Thêm padding cho đẹp
+                      padding: const EdgeInsets.all(16),
                       margin: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 12), // Thêm margin
+                          horizontal: 24, vertical: 12),
                       decoration: BoxDecoration(
                         color: Theme.of(context)
                             .colorScheme
                             .primary
-                            .withOpacity(0.1), // Màu nền
-                        borderRadius: BorderRadius.circular(12), // Bo góc
+                            .withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                            color:
-                                Theme.of(context).colorScheme.primary), // Viền
+                            color: Theme.of(context).colorScheme.primary),
                       ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment
-                            .start, // Căn trái cho văn bản trên
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             "Total number of days not yet clocked in:",
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primary, // Màu chữ
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                           Row(
-                            mainAxisAlignment:
-                                MainAxisAlignment.center, // Căn giữa
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 "$totalAbsentDays",
                                 style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .secondary, // Màu chữ lớn
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                 ),
                               ),
                             ],
@@ -249,7 +242,7 @@ class AttendancePageState extends State<AttendancePage> {
     var firstMonth = DateTime(currentTime.year, currentTime.month);
     var lastMonth = DateTime(currentTime.year, currentTime.month + 1);
     var formatter = DateFormat("yyyy-MM-dd");
-    controller.getAttendance(formatter.format(firstMonth),
-        formatter.format(lastMonth)); // Truyền accessToken vào
+    controller.getAttendance(
+        formatter.format(firstMonth), formatter.format(lastMonth));
   }
 }
