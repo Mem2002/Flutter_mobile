@@ -319,28 +319,48 @@ class Api {
     }
   }
 
-static Future<Map<String, dynamic>> getIncome(
-    String accessToken, int month, int year) async {
+static Future<int> getIncome(String accessToken, String startDate, String endDate) async {
   final Uri uri = Uri.parse('${Constants.baseUrl}income').replace(queryParameters: {
-    'month': month.toString(),
-    'year': year.toString(),
+    'startDate': startDate,
+    'endDate': endDate,
   });
 
-  final response = await http.get(
-    uri,
-    headers: {
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer $accessToken',
-    },
-  );
+  try {
+    final response = await http.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
 
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body); // Trả về Map<String, dynamic>
-  } else {
-    print('Error: ${response.statusCode} - ${response.body}');
-    throw Exception('Unable to load income data');
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data.containsKey('income')) {
+        // Kiểm tra kiểu dữ liệu và chuyển đổi nếu cần
+         print('Income key found in response: ${data['income']}'); // Log giá trị income
+        var incomeValue = data['income'];
+          print('Raw income from API: $incomeValue'); // Kiểm tra giá trị gốc từ API
+        if (incomeValue is double) {
+          return incomeValue.toInt(); // Chuyển đổi từ double sang int
+        } else if (incomeValue is int) {
+          return incomeValue; // Trả về trực tiếp nếu đã là int
+        } else {
+          throw Exception('Unexpected income type: ${incomeValue.runtimeType}');
+        }
+      } else {
+        throw Exception('Income key not found in response');
+      }
+    } else {
+      print('Error: ${response.statusCode} - ${response.body}');
+      throw Exception('Unable to load income data');
+    }
+  } catch (e) {
+    print('Caught error: $e');
+    rethrow; // Ném lại ngoại lệ để xử lý ở nơi gọi
   }
 }
+
 
 
   static Future<List<AttendanceResponses>> getAttendance(
@@ -370,21 +390,21 @@ static Future<Map<String, dynamic>> getIncome(
     }
   }
 
-  static Future<List<Payslip>> getPayslip(String accessToken) async {
-    final response =
-        await http.get(Uri.parse('${Constants.baseUrl}payslip'), headers: {
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer $accessToken'
-    });
+  // static Future<List<Payslip>> getPayslip(String accessToken) async {
+  //   final response =
+  //       await http.get(Uri.parse('${Constants.baseUrl}payslip'), headers: {
+  //     'Content-Type': 'application/json; charset=UTF-8',
+  //     'Authorization': 'Bearer $accessToken'
+  //   });
 
-    if (response.statusCode == 200) {
-      List<dynamic> body = jsonDecode(response.body);
-      return body.map((item) => Payslip.fromJson(item)).toList();
-    } else {
-      print('Error: ${response.statusCode} - ${response.body}');
-      throw Exception('Failed to load payslips');
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //     List<dynamic> body = jsonDecode(response.body);
+  //     return body.map((item) => Payslip.fromJson(item)).toList();
+  //   } else {
+  //     print('Error: ${response.statusCode} - ${response.body}');
+  //     throw Exception('Failed to load payslips');
+  //   }
+  // }
 
   static Future<String> sendCodeToBackend(String code) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -469,17 +489,17 @@ static Future<Map<String, dynamic>> getIncome(
     }
   }
 
-  static Future<List<Payslip>> getPayslipWithStoredToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? storedToken = prefs.getString('accessToken');
+  // static Future<List<Payslip>> getPayslipWithStoredToken(String startDate, String endDate) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? storedToken = prefs.getString('accessToken');
 
-    if (storedToken != null) {
-      return await getPayslip(
-          storedToken); // Call your existing getPayslip method
-    } else {
-      throw Exception('No access token found.');
-    }
-  }
+  //   if (storedToken != null) {
+  //     return await getPayslip(
+  //         storedToken); // Call your existing getPayslip method
+  //   } else {
+  //     throw Exception('No access token found.');
+  //   }
+  // }
 
   // Lưu access token vào SharedPreferences
   static Future<void> saveAccessToken(String token) async {

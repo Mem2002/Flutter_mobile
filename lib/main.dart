@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/controllers/attendance_controller_2.dart';
+import 'package:flutter_app/controllers/payment_controller.dart';
 import 'package:flutter_app/injection.dart';
 import 'package:flutter_app/pages/home_page.dart';
 import '../styles/themes.dart';
@@ -27,8 +28,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart'; // Thêm dòng này nếu chưa có
 
 import 'injection.dart';
+
 final GetIt getIt = GetIt.instance;
 
 NotificationDetails notificationDetails({String title = "Checkin"}) =>
@@ -48,10 +51,15 @@ final StreamController<NotificationResponse> onNotificationRecevied =
 
 Future<void> main() async {
   await configureDependencies();
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<PaymentController>(create: (context) => PaymentController(getIt<IApplicationService>())),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
-
-
 
 // checkPermission() async {
 //   if (await Permission.location.isGranted) {
@@ -255,23 +263,22 @@ class MyApp extends StatefulWidget {
 }
 
 class HomePageState extends State<MyApp> {
-    late StreamSubscription<List<ConnectivityResult>> stream;
+  late StreamSubscription<List<ConnectivityResult>> stream;
   ValueNotifier<ThemeData?> theme = ValueNotifier<ThemeData?>(null);
 
-   loadTheme() {
+  loadTheme() {
     Themes.setTheme();
     theme.value = Themes.currentTheme;
   }
 
-
-   @override
+  @override
   void initState() {
     stream = processService();
     loadTheme();
     super.initState();
   }
 
-@override
+  @override
   void dispose() {
     stream.cancel();
     super.dispose();

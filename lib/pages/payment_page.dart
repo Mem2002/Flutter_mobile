@@ -6,9 +6,10 @@ import 'package:flutter_app/styles/themes.dart';
 import 'package:flutter_app/utils/statusbar_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:mat_month_picker_dialog/mat_month_picker_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/payslip_model.dart';
-import '../services/api.dart';
 import '../widgets/item_setting.dart';
+import 'package:provider/provider.dart'; // Nếu bạn dùng Provider
 
 class PaymentPage extends StatefulWidget {
   const PaymentPage({super.key});
@@ -18,7 +19,7 @@ class PaymentPage extends StatefulWidget {
 }
 
 class _PaymentPageState extends State<PaymentPage> {
-  late Future<List<Payslip>> _payslipsFuture;
+  late PaymentController paymentController; // Thêm PaymentController
   DateTime currentTime = DateTime.now();
   ScrollController scrollController = ScrollController();
   double opacity = 0;
@@ -27,29 +28,32 @@ class _PaymentPageState extends State<PaymentPage> {
   void initState() {
     super.initState();
     scrollController.addListener(scrollChange);
-    _initializeDate();
-    _loadPayslips();
+    // _initializeDate();
+    _loadIncome(); // Gọi phương thức lấy thu nhập
   }
 
-  Future<void> _loadPayslips() async {
-    setState(() {
-      _payslipsFuture = Api.getPayslipWithStoredToken();
-    });
+  Future<void> _loadIncome() async {
+    final prefs = await SharedPreferences.getInstance();
+    final accessToken = prefs.getString('accessToken');
+
+    if (accessToken != null) {
+      await paymentController.getIncome(accessToken, currentTime.month, currentTime.year);
+    }
   }
 
-  void _initializeDate() {
-    var now = DateTime.now();
-    var month = now.month - 1;
-    var year = now.year;
-    if (now.day < 10) {
-      month -= 1;
-    }
-    if (month <= 0) {
-      month += 12;
-      year -= 1;
-    }
-    currentTime = DateTime(year, month, 1);
-  }
+  // void _initializeDate() {
+  //   var now = DateTime.now();
+  //   var month = now.month - 0;
+  //   var year = now.year;
+  //   if (now.day < 10) {
+  //     month -= 1;
+  //   }
+  //   if (month <= 0) {
+  //     month += 12;
+  //     year -= 1;
+  //   }
+  //   currentTime = DateTime(year, month, 1);
+  // }
 
   void scrollChange() {
     setState(() {
@@ -72,6 +76,8 @@ class _PaymentPageState extends State<PaymentPage> {
 
   @override
   Widget build(BuildContext context) {
+    paymentController = Provider.of<PaymentController>(context); // Lấy PaymentController từ Provider
+
     return Scaffold(
       body: Stack(
         children: [
@@ -87,23 +93,19 @@ class _PaymentPageState extends State<PaymentPage> {
           ),
           SafeArea(
             child: RefreshIndicator(
-              onRefresh: _loadPayslips,
+              onRefresh: _loadIncome,
               child: CustomScrollView(
                 controller: scrollController,
                 slivers: [
                   _buildSliverAppBar(context),
                   SliverToBoxAdapter(
-                    child: FutureBuilder<List<Payslip>>(
-                      future: _payslipsFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                    child: ValueListenableBuilder<int?>(
+                      valueListenable: paymentController.income,
+                      builder: (context, income, _) {
+                        if (income == null) {
                           return const Center(child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          return Center(child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return const Center(child: Text('Chưa có phiếu lương'));
                         }
-                        return _buildPayslipList(snapshot.data!);
+                        return _buildIncomeDisplay(income);
                       },
                     ),
                   ),
@@ -156,53 +158,13 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  Widget _buildPayslipList(List<Payslip> payslipData) {
-    return Column(
-      children: payslipData.map((payslip) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Card(
-            elevation: 2,
-            child: Column(
-              children: _buildPayslipDetails(payslip),
-            ),
-          ),
-        );
-      }).toList(),
+  Widget _buildIncomeDisplay(int income) {
+    return Center(
+      child: Text(
+        "Thu nhập: ${_formatMoney(income.toDouble())}",
+        style: TextStyle(fontSize: 24),
+      ),
     );
-  }
-
-  List<Widget> _buildPayslipDetails(Payslip payslip) {
-    List<Widget> details = [];
-    
-    // Example of using your PayslipKey structure
-    List<PayslipKey> keys = [
-      PayslipKey(key: "Mức lương cơ bản", value: payslip.basicSalary, type: PayslipType.money),
-      PayslipKey(key: "Thời gian làm việc thực tế", value: payslip.actualWork, type: PayslipType.money),
-      PayslipKey(key: "KPI thời gian", value: payslip.timeKPI, type: PayslipType.money),
-      PayslipKey(key: "KPI công việc", value: payslip.jobKPI, type: PayslipType.money),
-      PayslipKey(key: "Thu nhập KRA", value: payslip.kraIncome, type: PayslipType.money),
-      PayslipKey(key: "Làm thêm", value: payslip.overtime, type: PayslipType.money),
-      PayslipKey(key: "Thưởng", value: payslip.bonus, type: PayslipType.money),
-      PayslipKey(key: "Phạt khác", value: payslip.otherPenalties, type: PayslipType.money),
-    ];
-
-    for (var key in keys) {
-      details.add(
-        ItemSettingWidget(
-          title: key.key,
-          value: _formatMoney(_parseToDouble(key.value)),
-          hasEdit: false,
-        ),
-      );
-    }
-    return details;
-  }
-
-  double? _parseToDouble(dynamic value) {
-    if (value is double) return value;
-    if (value is String) return double.tryParse(value);
-    return null;
   }
 
   Future<void> selectMonth() async {
@@ -216,7 +178,7 @@ class _PaymentPageState extends State<PaymentPage> {
     if (selectedDate != null) {
       setState(() {
         currentTime = selectedDate;
-        _loadPayslips();
+        _loadIncome(); // Tải lại thu nhập với tháng mới
       });
     }
   }
