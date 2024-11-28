@@ -21,6 +21,7 @@ import 'package:flutter_app/controllers/authentication_controller.dart'
 import 'package:flutter_app/controllers/form_controller.dart' as _i444;
 import 'package:flutter_app/controllers/home_controller.dart' as _i831;
 import 'package:flutter_app/controllers/payment_controller.dart' as _i635;
+import 'package:flutter_app/controllers/user_controller.dart' as _i638;
 import 'package:flutter_app/services/api.dart' as _i1029;
 import 'package:flutter_app/services/application_service.dart' as _i838;
 import 'package:flutter_app/services/cache_service.dart' as _i611;
@@ -44,6 +45,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i296.AttendanceControllers>(
         () => _i296.AttendanceControllers());
     gh.factory<_i1029.Api>(() => _i1029.Api());
+    gh.factory<_i638.UserController>(() => _i638.UserController());
     gh.factory<_i474.IConfigBase>(
       () => _i474.BetaConfig(),
       registerFor: {_test},

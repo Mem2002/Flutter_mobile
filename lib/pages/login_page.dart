@@ -21,7 +21,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginState extends State<LoginPage> {
-  final TextEditingController emailController = TextEditingController(text: "mem@gmail.com");
+  final TextEditingController emailController = TextEditingController(text: "vananh@gmail.com");
   final TextEditingController passwordController = TextEditingController(text: "Mem@@382002");
   bool hidePassword = true;
   String? emailError;

@@ -1,6 +1,7 @@
-// ignore: unused_import
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/controllers/user_controller.dart';
+import 'package:flutter_app/models/user_model.dart';
 import 'package:flutter_app/pages/form_page.dart';
 import 'package:flutter_app/pages/login_page.dart';
 import 'package:flutter_app/pages/qr_scanner.dart';
@@ -11,13 +12,9 @@ import 'package:intl/intl.dart';
 import '../controllers/home_controller.dart';
 import '../styles/themes.dart';
 import '../utils/statusbar_utils.dart';
-// ignore: unused_import
-import 'package:flutter_app/main.dart';
 import 'package:flutter_app/widgets/primary_botton.dart';
 import '../utils/page_router.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-// ignore: duplicate_import
-import 'package:intl/intl.dart';
 import 'package:get_it/get_it.dart';
 import '../styles/text_styles.dart';
 
@@ -28,16 +25,19 @@ class HomePage extends StatefulWidget {
   State<StatefulWidget> createState() => HomePageState();
 }
 
-//  Using the Function in Your Flutter App
 class HomePageState extends State<HomePage> {
-  final HomeController controller = GetIt.instance.get<HomeController>();
-  String deviceId = "";
-  String error = "";
+  final UserController controller = GetIt.instance.get<UserController>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Gọi phương thức getProfile để tải thông tin người dùng
+    controller.getProfile();
+  }
 
   @override
   Widget build(BuildContext context) {
     StatusBarUtils.config();
-
     return Scaffold(
       body: Stack(
         children: [
@@ -71,81 +71,39 @@ class HomePageState extends State<HomePage> {
             right: 16,
             left: 16,
             child: SafeArea(
-              child: ValueListenableBuilder(
+              child: ValueListenableBuilder<UserResponses?>(
                 valueListenable: controller.data,
-                builder: (context, value, child) {
-                  String name = value?.username ?? "";
+                builder: (context, userResponses, child) {
+                  String name = userResponses?.user.username ?? "Guest";
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Row(
                         children: [
                           Expanded(
-                              child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Welcome $name",
-                                style: TitleNormalTextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary),
-                              ),
-                              Text(
-                                DateFormat(
-                                        AppLocalizations.of(context)!
-                                            .home_currentTime,
-                                        AppLocalizations.of(context)!.locale)
-                                    .format(DateTime.now()),
-                                style: SmallNormalTextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary),
-                              )
-                            ],
-                          )),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Welcome $name",
+                                  style: TitleNormalTextStyle(
+                                    color: Theme.of(context).colorScheme.onPrimary,
+                                  ),
+                                ),
+                                Text(
+                                  DateFormat(
+                                    AppLocalizations.of(context)!.home_currentTime,
+                                    AppLocalizations.of(context)!.locale,
+                                  ).format(DateTime.now()),
+                                  style: SmallNormalTextStyle(
+                                    color: Theme.of(context).colorScheme.onPrimary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
-                      ValueListenableBuilder(
-                        valueListenable: controller.today,
-                        builder: (context, value, child) {
-                          var timeFormater = DateFormat("HH:mm");
-                          if (value == null) {
-                            return Container();
-                          }
-                          return Container(
-                            margin: const EdgeInsets.only(top: 12),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .background
-                                    .withOpacity(0.7),
-                                borderRadius: BorderRadius.circular(12)),
-                            child: Row(children: [
-                              Container(
-                                margin: const EdgeInsets.only(right: 12),
-                                height: 40,
-                                width: 40,
-                                child:
-                                    Image.asset("assets/images/ic_success.png"),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                      "Hôm nay đã check-in: ${timeFormater.format(value.checkIn)}"),
-                                  Visibility(
-                                    visible: value.checkOut != null,
-                                    child: Text(
-                                        "check-out: ${timeFormater.format((value.checkOut ?? DateTime.now()))}"),
-                                  ),
-                                ],
-                              )
-                            ]),
-                          );
-                        },
-                      )
                     ],
                   );
                 },
@@ -196,7 +154,7 @@ class HomePageState extends State<HomePage> {
                       child: PrimaryButton(
                         onPressed: navigateToLogout,
                         title: AppLocalizations.of(context)!.home_logout,
-                        icon: "assets/images/ic_logout.png", // Đảm bảo có icon này
+                        icon: "assets/images/ic_logout.png",
                       ),
                     ),
                   ],
@@ -209,31 +167,19 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  navigateToScanner() {
+  void navigateToScanner() {
     Navigator.of(context).push(SidePageRoute(const ScannerPage()));
   }
 
-  navigateToAttendance() {
+  void navigateToAttendance() {
     Navigator.of(context).push(SidePageRoute(const AttendancePage()));
   }
 
-  navigateToPayment() {
+  void navigateToPayment() {
     Navigator.of(context).push(SidePageRoute(const PaymentPage()));
   }
 
-  // navigateToForm() {
-  //   Navigator.of(context).push(SidePageRoute(const FormPage()));
-  // }
-
-  navigateToLogout() {
+  void navigateToLogout() {
     Navigator.of(context).push(SidePageRoute(const LoginPage()));
   }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    controller.getProfile();
-  }
-
 }

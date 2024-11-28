@@ -6,6 +6,7 @@ import 'package:flutter_app/apis/response_base.dart';
 import 'package:flutter_app/models/attendance_model.dart';
 import 'package:flutter_app/models/form_model.dart';
 import 'package:flutter_app/models/payslip_model.dart'; // Đổi tên file model cho phù hợp
+import 'package:flutter_app/models/user_model.dart';
 import 'package:flutter_app/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
@@ -37,7 +38,7 @@ class Api {
         }),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $storedToken', 
+          'Authorization': 'Bearer $storedToken',
         },
       );
 
@@ -75,7 +76,6 @@ class Api {
       if (response.statusCode == 200) {
         return ProposeDataResponse.fromJson(jsonDecode(response.body));
       } else {
-
         print('Error: ${response.statusCode} - ${response.body}');
         return null;
       }
@@ -300,8 +300,7 @@ class Api {
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer $storedToken',
         },
-        body: jsonEncode(<String, dynamic>{
-        }),
+        body: jsonEncode(<String, dynamic>{}),
       );
 
       if (response.statusCode == 200) {
@@ -316,48 +315,81 @@ class Api {
     }
   }
 
-static Future<int> getIncome(String accessToken, String startDate, String endDate) async {
-  final Uri uri = Uri.parse('${Constants.baseUrl}income').replace(queryParameters: {
-    'startDate': startDate,
-    'endDate': endDate,
-  });
+  static Future<UserResponses> getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedToken = prefs.getString('accessToken');
 
-  try {
+    if (storedToken == null) {
+      throw Exception('No access token found');
+    }
+
+    final Uri uri = Uri.parse('${Constants.baseUrl}user');
+
     final response = await http.get(
       uri,
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $accessToken',
+        'Authorization': 'Bearer $storedToken',
       },
     );
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      if (data.containsKey('income')) {
-        print('Income key found in response: ${data['income']}'); 
-        var incomeValue = data['income'];
-          print('Raw income from API: $incomeValue'); 
-        if (incomeValue is double) {
-          return incomeValue.toInt(); 
-        } else if (incomeValue is int) {
-          return incomeValue; 
-        } else {
-          throw Exception('Unexpected income type: ${incomeValue.runtimeType}');
-        }
-      } else {
-        throw Exception('Income key not found in response');
+      try {
+        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        print(jsonResponse);
+        return UserResponses.fromJson(jsonResponse);
+      } catch (e) {
+        throw Exception('Error parsing user data: $e');
       }
     } else {
       print('Error: ${response.statusCode} - ${response.body}');
-      throw Exception('Unable to load income data');
+      throw Exception('Unable to load user data: ${response.statusCode}');
     }
-  } catch (e) {
-    print('Caught error: $e');
-    rethrow; 
   }
-}
 
+  static Future<int> getIncome(
+      String accessToken, String startDate, String endDate) async {
+    final Uri uri =
+        Uri.parse('${Constants.baseUrl}income').replace(queryParameters: {
+      'startDate': startDate,
+      'endDate': endDate,
+    });
 
+    try {
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data.containsKey('income')) {
+          print('Income key found in response: ${data['income']}');
+          var incomeValue = data['income'];
+          print('Raw income from API: $incomeValue');
+          if (incomeValue is double) {
+            return incomeValue.toInt();
+          } else if (incomeValue is int) {
+            return incomeValue;
+          } else {
+            throw Exception(
+                'Unexpected income type: ${incomeValue.runtimeType}');
+          }
+        } else {
+          throw Exception('Income key not found in response');
+        }
+      } else {
+        print('Error: ${response.statusCode} - ${response.body}');
+        throw Exception('Unable to load income data');
+      }
+    } catch (e) {
+      print('Caught error: $e');
+      rethrow;
+    }
+  }
 
   static Future<List<AttendanceResponses>> getAttendance(
       String accessToken, String startDate, String endDate) async {
@@ -400,8 +432,7 @@ static Future<int> getIncome(String accessToken, String startDate, String endDat
         url,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization':
-              'Bearer $storedToken',
+          'Authorization': 'Bearer $storedToken',
         },
         body: jsonEncode(<String, dynamic>{
           'code': code,
@@ -446,7 +477,7 @@ static Future<int> getIncome(String accessToken, String startDate, String endDat
           String groupName = body.dt!.data!.groupWithRole!.group!.groupName;
 
           if (groupName == "Employee") {
-            return body; 
+            return body;
           } else {
             print('Người dùng không thuộc nhóm Employee');
             return null;
@@ -461,7 +492,7 @@ static Future<int> getIncome(String accessToken, String startDate, String endDat
       }
     } catch (e) {
       print('Đã xảy ra lỗi: $e');
-      return null; 
+      return null;
     }
   }
 

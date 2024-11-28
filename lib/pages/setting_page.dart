@@ -222,11 +222,11 @@
 //     });
 //   }
 
-//   signOut() async {
-//     await controller.signOut().then((value) => Navigator.of(context)
-//         .pushAndRemoveUntil(
-//             FadePageRoute(const LoginPage()), (Route<dynamic> route) => false));
-//   }
+  // signOut() async {
+  //   await controller.signOut().then((value) => Navigator.of(context)
+  //       .pushAndRemoveUntil(
+  //           FadePageRoute(const LoginPage()), (Route<dynamic> route) => false));
+  // }
 
 //   Widget itemDisplay(String title, String value, {bool hasEdit = true}) {
 //     return ItemSettingWidget(title: title, value: value, hasEdit: hasEdit);

@@ -43,7 +43,7 @@ class AttendanceControllers {
 
       for (DateTime date = start;
           date.isBefore(end);
-          date = date.add(Duration(days: 1))) {
+          date = date.add(const Duration(days: 1))) {
         allDays.add(date);
       }
 

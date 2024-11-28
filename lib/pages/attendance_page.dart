@@ -88,12 +88,12 @@ class AttendancePageState extends State<AttendancePage> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       Text(
-                                        "Time to enter: ${p0.checkIn != null ? dateFormat.format(p0.checkIn!.toLocal()) : 'Not yet'}",
+                                        "Time check-in: ${p0.checkIn != null ? dateFormat.format(p0.checkIn!.toLocal()) : 'Not yet'}",
                                       ),
                                       Visibility(
                                         visible: p0.checkOut != null,
                                         child: Text(
-                                          "Time out: ${p0.checkOut != null ? dateFormat.format(p0.checkOut!.toLocal()) : 'Not yet'}",
+                                          "Time check-out: ${p0.checkOut != null ? dateFormat.format(p0.checkOut!.toLocal()) : 'Not yet'}",
                                         ),
                                       ),
                                     ],
@@ -106,24 +106,6 @@ class AttendancePageState extends State<AttendancePage> {
                       );
                     }),
               ),
-              // SliverToBoxAdapter(
-              //   child: ValueListenableBuilder<AttendanceResponses?>(
-              //     valueListenable: controller.today,
-              //     builder: (context, value, child) {
-              //       if (value == null) {
-              //         return Container();
-              //       }
-              //       var timeFormatter = DateFormat("HH:mm");
-              //       return itemDisplay(
-              //         "Hôm nay",
-              //         timeFormatter.format(value.checkIn.toLocal()),
-              //         outTime: value.checkOut == null
-              //             ? null
-              //             : timeFormatter.format(value.checkOut!.toLocal()),
-              //       );
-              //     },
-              //   ),
-              // ),
               SliverToBoxAdapter(
                 child: ValueListenableBuilder<List<DateTime>>(
                   valueListenable: controller.absentDays,
